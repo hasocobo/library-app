@@ -162,7 +162,7 @@ const Login = () => {
                       <div className="button">
                         <button
                           type="submit"
-                          className="mb-2 rounded-md bg-blue-400 hover:bg-blue-500"
+                          className="mb-2 rounded-sm bg-blue-400 hover:bg-blue-500"
                         >
                           Giriş Yap
                         </button>

@@ -6,11 +6,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Login from './pages/Login/Login.tsx';
 import Signup from './pages/Login/Signup.tsx';
 import { UserProvider } from './context/UserProvider.tsx';
+import BookList from './pages/Login/BookList.tsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />
+    element: <App />,
+    children: []
   },
   {
     path: '/login',
@@ -19,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <Signup />
+  },
+  {
+    path: '/books',
+    element: <BookList />
   }
 ]);
 

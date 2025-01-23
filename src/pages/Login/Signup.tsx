@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Dialog,
@@ -21,8 +21,8 @@ export default function Signup() {
     password: ''
   });
 
-  let [isSuccessOpen, setIsSuccessOpen] = useState(false);
-  let [isFailureOpen, setIsFailureOpen] = useState(false);
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [isFailureOpen, setIsFailureOpen] = useState(false);
 
   function open() {
     setIsSuccessOpen(true);
@@ -135,10 +135,10 @@ export default function Signup() {
                         close
                       </i>
                     </div>
-                    User already exists!
+                    Bu kullanıcı zaten mevcut!
                   </DialogTitle>
                   <p className="mt-2 text-sm/6 text-slate-800/50">
-                    This e-mail is already being used, please try another e-mail, or log-in with the existing e-mail.
+                    Bu e-posta adresi zaten kullanılıyor, lütfen başka bir e-posta adresi deneyin.
                   </p>
                   <div className="mt-4">
                     <div className='flex justify-between '>
@@ -246,7 +246,7 @@ export default function Signup() {
                             />
                             <label htmlFor="password">Şifre</label>
                           </div>
-                          <div className="relative mt-3 pb-6">
+                          {/*<div className="relative mt-3 pb-6">
                             <div className="absolute left-3 top-[-26px] text-slate-400">
                               Rol
                             </div>
@@ -258,15 +258,15 @@ export default function Signup() {
                               onChange={handleSignupInputs}
                               required
                             >
-                              <option>user</option>
+                              <option>Kullanıcı</option>
                             </select>
                           </div>
+                          */}
                         </div>
-
                         <div className="button">
                           <button
                             type="submit"
-                            className="mb-2 rounded-md bg-blue-400 hover:bg-blue-500"
+                            className="mb-2 rounded-sm bg-blue-400 hover:bg-blue-500"
                           >
                             Kaydol
                           </button>
