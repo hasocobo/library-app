@@ -1,0 +1,163 @@
+/*@font-face {
+    font-family: 'Josefin Normal';
+    font-style: italic;
+    src: url(./fonts/JosefinSans-Regular.ttf);
+}*/
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --primary-text-color: #0f172a;
+  --secondary-text-color: #1f2937;
+  --tertiary-text-color: #9ca3af;
+  --background-color: #f8fafc;
+}
+
+*,
+::after,
+::before {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  background-size: contain;
+}
+
+#page-container h1 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+#page-container h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0rem;
+}
+
+#form > div > h2 {
+  position: relative;
+  left: 0.25px;
+}
+
+#page-container::before {
+  content: '';
+  z-index: -2;
+  /*background-image: url(../../../assets/bg-5.jpg);
+  */background-size: cover;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+
+
+#main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#page-container fieldset,
+form,
+input {
+  appearance: none;
+  padding: 0;
+  background-color: transparent;
+}
+
+#form {
+  height: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#form > form {
+  position: relative;
+  overflow: visible;
+}
+
+#page-container div label {
+  color: var(--tertiary-text-color);
+  visibility: visible;
+  position: relative;
+  z-index: 2;
+  top: -2.3rem;
+  left: 0.5rem;
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+#page-container div input {
+  display: block;
+  width: 100%;
+  border-bottom: 1px solid #9ca3af;
+  margin-bottom: 0.6rem;
+  padding-left: 0.5rem;
+  height: 2rem;
+  color: var(--secondary-text-color);
+  font-size: 1rem;
+}
+
+#page-container div input::placeholder {
+  color: var(--tertiary-text-color);
+  font-size: 1rem;
+  visibility: hidden;
+}
+
+#page-container div input:focus {
+  outline: none;
+}
+
+#page-container div input:focus + label,
+#page-container div input:not(:placeholder-shown) + label {
+  outline: none;
+  font-size: 1rem;
+  position: relative;
+  top: -3.8rem;
+  left: 0rem;
+}
+
+button[type='submit'] {
+  width: 16rem;
+  height: 3rem;
+  color: var(--background-color);
+  font-size: 1.3rem;
+  font-weight: 700;
+  /* background-color: #60a5fa; */
+  transition: 0.3s;
+}
+
+button[type='submit']:hover {
+  cursor: pointer;
+  /* background-color: #3b82f6; */
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+}
+
+fieldset > div:last-child {
+  text-align: center;
+  color: var(--tertiary-text-color);
+  margin-top: 0.2rem;
+}
+
+#page-container :valid {
+  border-color: skyblue;
+}
+
+#page-container :invalid {
+  border-color: #f87171;
+}
+
+@media screen and (max-width: 640px) {
+  #main {
+    align-items: start;
+  }
+
+  #page-container::before {
+    background-image: none;
+  }
+}
