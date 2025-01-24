@@ -84,7 +84,10 @@ main:not(.icon) {
 }
 
 .selected {
-  background-color: rgb(226 232 240);
+  /*background-color: rgb(226 232 240);
+*/
+  border-bottom: 2px oklch(0.588 0.158 241.966) solid;
+  --tw-border-opacity: 0.9;
 }
 
 .open {

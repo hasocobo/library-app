@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
-const NavItem = function ({ link, name, onClick, style, icon }) {
+const NavItem = function ({ link, name, onClick, style, textStyle, icon, iconStyle }) {
   return (
     <Link
       to={link}
-      className={`items-center rounded-sm p-3 transition 
-     duration-200 hover:cursor-pointer hover:bg-slate-200 active:bg-slate-300 ${style}`}
+      className={`items-center px-4 h-full flex transition
+     duration-300 hover:cursor-pointer hover:border-b-2 border-sky-600 border-opacity-50 active:border-b-2 ${style}`}
       onClick={onClick}
     >
-      <div className='flex items-center text-slate-700 gap-1'>
-        <i className='material-symbols-outlined text-slate-400'>{icon}</i>
+      <div className={`flex items-center gap-1 ${textStyle}`}>
+        <i className={`material-symbols-outlined font-extralight ${iconStyle}`}>{icon}</i>
        {name}
       </div>
     </Link>
