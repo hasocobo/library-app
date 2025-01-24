@@ -9,7 +9,7 @@ type Book = {
   publishYear: number;
   pageCount: number;
   quantity: number;
-  //description: string;
+  description: string;
 };
 
 const BookList = () => {

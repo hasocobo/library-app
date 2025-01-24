@@ -1,35 +1,29 @@
-import React,{ useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState } from 'react';
+import Header from './components/Header/Header';
+import { Outlet } from 'react-router-dom';
+import SidebarMenu from './components/Header/SidebarMenu';
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel='noreferrer'>
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="relative w-full">
+        <div className="relative z-10 flex h-dvh min-h-dvh w-full flex-col">
+          <header className="top-0 w-full">
+            <Header onMenuClick={() => setIsSidebarOpen(true)} />
+          </header>
+          <main className="grow overflow-y-auto text-neutral-100">
+            <Outlet />
+          </main>
+
+          <SidebarMenu
+            isOpen={isSidebarOpen}
+            handleClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          />
+        </div>
       </div>
-      <h1 className='text-3xl text-red-600'>You successfully set up your project if this text is red</h1>
-      <h1 className='text-3xl text-red-600'>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
