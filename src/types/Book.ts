@@ -8,6 +8,7 @@ type TBook = {
   quantity: number;
   description?: string;
   imageUrl?: string;
+  genreName?: string;
 };
 
 export default TBook;

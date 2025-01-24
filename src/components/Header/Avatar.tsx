@@ -39,7 +39,7 @@ export default function Avatar({ user }) {
               <UserIcon user={user} />
               <div className="flex flex-col">
                 <p className="font-semibold text-slate-700">
-                  {user.name + ' ' + user.surname}
+                  {user.firstName && user.firstName + ' ' + user.lastName}
                 </p>
                 <p className="font-normal text-slate-500">{role}</p>
               </div>

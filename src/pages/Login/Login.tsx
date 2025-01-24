@@ -1,4 +1,4 @@
-import React, { FormEventHandler, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Dialog,
@@ -8,57 +8,70 @@ import {
   TransitionChild
 } from '@headlessui/react';
 import axios from 'axios';
-import './LoginSignup.css';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserProvider';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
 
   const { setUser } = useUser();
   const navigate = useNavigate();
 
-  let [isOpen, setIsOpen] = useState(false);
-
-  function open() {
+  function openDialog() {
     setIsOpen(true);
   }
 
-  function close() {
+  function closeDialog() {
     setIsOpen(false);
   }
 
-  const handleLoginSubmit = async (event: any) => {
+  const handleLoginSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
     try {
       const response = await axios.post('http://localhost:5109/api/v1/login', {
         username,
         password
       });
-      const { token } = response.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', response.data.user._id);
-      setUser(response.data.user);
-      await new Promise((resolve, reject) => {
-        setTimeout(resolve, 500);
+
+      // Destructure the token and user details from the backend response
+      const { data } = response;
+      const { jwtToken, userDetails } = data;
+
+      // Store token and user details in localStorage
+      localStorage.setItem('token', jwtToken);
+      localStorage.setItem('userId', userDetails.id);
+      localStorage.setItem('user', JSON.stringify(userDetails));
+      localStorage.setItem('roles', JSON.stringify(userDetails.roles));
+
+      // Update the user context
+      setUser({
+        id: userDetails.id,
+        username: userDetails.username,
+        email: userDetails.email,
+        firstName: userDetails.firstName,
+        lastName: userDetails.lastName,
+        dateOfBirth: userDetails.dateOfBirth,
+        roles: userDetails.roles
       });
-      navigate('/');
-    } catch (err) {
-      console.log(err);
-      setIsOpen(true);
-    } finally {
-      setIsOpen(true);
+
+      navigate('/'); // Redirect to the home page
+    } catch (error) {
+      console.error('Login failed:', error);
+      openDialog();
     }
   };
 
   return (
     <>
+      {/* Error Dialog */}
       <Transition appear show={isOpen}>
         <Dialog
           as="div"
           className="relative z-10 focus:outline-none"
-          onClose={close}
+          onClose={closeDialog}
         >
           <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-4">
@@ -87,8 +100,8 @@ const Login = () => {
                   </p>
                   <div className="mt-4 flex justify-end">
                     <Button
-                      className="inline-flex items-center gap-2 rounded-md bg-blue-400 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 transition duration-200 focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[hover]:bg-blue-500 data-[open]:bg-gray-700"
-                      onClick={close}
+                      className="inline-flex items-center gap-2 rounded-md bg-blue-400 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 transition duration-200 focus:outline-none data-[hover]:bg-blue-500 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
+                      onClick={closeDialog}
                     >
                       Tekrar Dene
                     </Button>
@@ -99,96 +112,93 @@ const Login = () => {
           </div>
         </Dialog>
       </Transition>
-      {
-        <div
-          id="page-container"
-          className={
-            'bg-image flex h-screen justify-center overflow-y-hidden bg-transparent sm:items-center ' +
-            (isOpen ? 'blur-sm' : '')
-          }
-        >
-          <div id="main" className="rounded-lg">
-            <div
-              id="card-container"
-              className="mx-auto flex rounded-lg shadow-sm sm:ring-1 sm:ring-slate-900/5"
-            >
-              <div id="form-container">
-                <div id="form">
-                  <div
-                    id="form-greeting"
-                    className="rounded-t-lg bg-stone-50 px-16 py-6 text-center"
-                  >
-                    <h1 className="text-slate-700">Merhaba!</h1>
-                    <h2 className="text-slate-400">
-                      {""}
-                    </h2>
-                  </div>
-                  <form
-                    onSubmit={handleLoginSubmit}
-                    className="rounded-b-lg bg-white px-16 pt-8 pb-8"
-                  >
-                    <fieldset>
-                      <div>
-                        <div>
-                          <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            minLength={3}
-                            maxLength={20}
-                            placeholder=" "
-                            required
-                          />
-                          <label htmlFor="username">Kullanıcı Adı</label>
-                        </div>
-                        <div>
-                          <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            minLength={6}
-                            maxLength={20}
-                            placeholder=" "
-                            required
-                          />
-                          <label htmlFor="password">Şifre</label>
-                        </div>
-                      </div>
 
-                      <div className="button">
-                        <button
-                          type="submit"
-                          className="mb-2 rounded-sm bg-blue-400 hover:bg-blue-500"
-                        >
-                          Giriş Yap
-                        </button>
+      {/* Login Form */}
+      <div
+        id="page-container"
+        className={`bg-image flex h-screen justify-center overflow-y-hidden bg-transparent sm:items-center ${
+          isOpen ? 'blur-sm' : ''
+        }`}
+      >
+        <div id="main" className="rounded-lg">
+          <div
+            id="card-container"
+            className="mx-auto flex rounded-lg shadow-sm sm:ring-1 sm:ring-slate-900/5"
+          >
+            <div id="form-container">
+              <div id="form">
+                <div
+                  id="form-greeting"
+                  className="rounded-t-lg bg-stone-50 px-16 py-6 text-center"
+                >
+                  <h1 className="text-slate-700">Merhaba!</h1>
+                  <h2 className="text-slate-400">{''}</h2>
+                </div>
+                <form
+                  onSubmit={handleLoginSubmit}
+                  className="rounded-b-lg bg-white px-16 pb-8 pt-8"
+                >
+                  <fieldset>
+                    <div>
+                      <div>
+                        <input
+                          type="text"
+                          id="username"
+                          name="username"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          minLength={3}
+                          maxLength={20}
+                          placeholder=" "
+                          required
+                        />
+                        <label htmlFor="username">Kullanıcı Adı</label>
                       </div>
                       <div>
-                        Şifreni mi unuttun?{' '}
-                        <a href="#" className="font-semibold text-blue-300">
-                          Şifreni Yenile
-                        </a>
-                        <div className="flex w-full justify-center">
-                          <div
-                            onClick={() => navigate('/signup')}
-                            className="mt-4 w-fit rounded-md bg-blue-50 p-2 font-semibold text-blue-400 hover:cursor-pointer hover:text-blue-500"
-                          >
-                            Veya Hemen Kaydol!
-                          </div>
+                        <input
+                          type="password"
+                          id="password"
+                          name="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          minLength={6}
+                          maxLength={20}
+                          placeholder=" "
+                          required
+                        />
+                        <label htmlFor="password">Şifre</label>
+                      </div>
+                    </div>
+
+                    <div className="button">
+                      <button
+                        type="submit"
+                        className="mb-2 rounded-sm bg-blue-400 hover:bg-blue-500"
+                      >
+                        Giriş Yap
+                      </button>
+                    </div>
+                    <div>
+                      Şifreni mi unuttun?{' '}
+                      <a href="#" className="font-semibold text-blue-300">
+                        Şifreni Yenile
+                      </a>
+                      <div className="flex w-full justify-center">
+                        <div
+                          onClick={() => navigate('/signup')}
+                          className="mt-4 w-fit rounded-md bg-blue-50 p-2 font-semibold text-blue-400 hover:cursor-pointer hover:text-blue-500"
+                        >
+                          Veya Hemen Kaydol!
                         </div>
                       </div>
-                    </fieldset>
-                  </form>
-                </div>
+                    </div>
+                  </fieldset>
+                </form>
               </div>
             </div>
           </div>
         </div>
-      }
+      </div>
     </>
   );
 };

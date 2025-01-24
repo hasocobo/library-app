@@ -1,16 +1,26 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import React from 'react';
 
 type User = {
-  name: string;
-  surname: string;
-  role: string;
+  id: string;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  role?: string,
+  roles: string[]; // Roles as an array of strings
 };
 
-const exampleUser: User = {
-  name: 'Hasan',
-  surname: 'Çoban',
+const initialUser: User = {
+  id: '',
+  username: '',
+  email: '',
+  firstName: 'Hasan',
+  lastName: 'Çoban',
+  dateOfBirth: '',
   role: 'admin',
+  roles: [],
 };
 
 type UserContextType = {
@@ -21,7 +31,16 @@ type UserContextType = {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User>(exampleUser);
+  const [user, setUser] = useState<User>(() => {
+    // Load user from localStorage if it exists
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : initialUser;
+  });
+
+  useEffect(() => {
+    // Save user to localStorage whenever it changes
+    localStorage.setItem('user', JSON.stringify(user));
+  }, [user]);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
