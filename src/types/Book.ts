@@ -6,7 +6,8 @@ type TBook = {
   publishYear: number;
   pageCount: number;
   quantity: number;
-  description: string;
+  description?: string;
+  imageUrl?: string;
 };
 
 export default TBook;
