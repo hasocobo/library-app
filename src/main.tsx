@@ -7,12 +7,17 @@ import Login from './pages/Login/Login.tsx';
 import Signup from './pages/Login/Signup.tsx';
 import { UserProvider } from './context/UserProvider.tsx';
 import BookList from './pages/Login/BookList.tsx';
+import BookView from './components/Book/BookView.tsx';
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '',
     element: <App />,
     children: [
+      {
+        path: '/',
+        element: <BookList />
+      },
       {
         path: 'mybooks',
         element: <BookList />
@@ -21,6 +26,10 @@ const router = createBrowserRouter([
         path: 'browse',
         element: <BookList />
       },
+      {
+        path: 'browse/:bookId',
+        element: <BookView />
+      }
     ]
   },
   {

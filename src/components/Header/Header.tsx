@@ -12,9 +12,9 @@ export default function Header({ onMenuClick }) {
 
       <div className="mx-auto max-w-7xl">
         <div className="px-4">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-16 lg:h-20">
             <Link to={'/'} className="hover:cursor-pointer">
-              {/*<img src={Logo} alt="station watch logo" className="md:w-32 w-20" />*/}
+              {/*<img src={Logo} alt="logo" className="md:w-32 w-20" />*/}
             </Link>
             <i onClick={onMenuClick} className="material-symbols-outlined hover:cursor-pointer md:hidden 
             hover:bg-slate-100 rounded-xl size-10 flex justify-center items-center">
