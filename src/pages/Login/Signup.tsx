@@ -12,12 +12,26 @@ import './LoginSignup.css';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserProvider';
 
+type SignupForm = {
+  username: string,
+  firstName: string,
+  lastName: string,
+  password: string,
+  email: string,
+  role?: string
+}
+
+const api = axios.create({
+  baseURL: `http://localhost:5109/api/v1/`,
+  headers: { "Content-Type": "application/json" }
+});
+
 export default function Signup() {
-  const [signupData, setSignupData] = useState({
+  const [signupData, setSignupData] = useState<SignupForm>({
     username: '',
-    name: '',
-    surname: '',
-    role: '',
+    firstName: '',
+    lastName: '',
+    email: '',
     password: ''
   });
 
@@ -43,7 +57,10 @@ export default function Signup() {
   async function handleSignupSubmit(e: any) {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5109/api/v1/users', signupData);
+      const response = await api.post(
+        'users',
+        signupData
+      );
       setIsSuccessOpen(true);
       console.log(response.data);
     } catch (error) {
@@ -51,8 +68,6 @@ export default function Signup() {
       console.log(error);
     }
   }
-
-  console.log(signupData);
 
   return (
     <>
@@ -82,24 +97,24 @@ export default function Signup() {
                         check
                       </i>
                     </div>
-                    User creation successful!
+                    Kullanıcı oluşturma başarılı!
                   </DialogTitle>
                   <p className="mt-2 text-sm/6 text-slate-800/50">
-                    You can now login using your username and password.
+                    Şimdi kullanıcı adını ve şifreni kullanarak giriş yapabilirsin.
                   </p>
                   <div className="mt-4">
-                    <div className='flex justify-between '>
+                    <div className="flex justify-between">
                       <Button
                         className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold text-green-900 shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-green-50 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
                         onClick={() => setIsSuccessOpen(false)}
                       >
-                        Close
+                        Kapat
                       </Button>
                       <Button
                         className="inline-flex items-center gap-2 rounded-md bg-green-800/90 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-green-900/90 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
                         onClick={() => navigate('/login')}
                       >
-                        Log in
+                        Giriş Yap
                       </Button>
                     </div>
                   </div>
@@ -138,10 +153,11 @@ export default function Signup() {
                     Bu kullanıcı zaten mevcut!
                   </DialogTitle>
                   <p className="mt-2 text-sm/6 text-slate-800/50">
-                    Bu e-posta adresi zaten kullanılıyor, lütfen başka bir e-posta adresi deneyin.
+                    Bu e-posta adresi zaten kullanılıyor, lütfen başka bir
+                    e-posta adresi deneyin.
                   </p>
                   <div className="mt-4">
-                    <div className='flex justify-between '>
+                    <div className="flex justify-between">
                       <Button
                         className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold text-blue-900 shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-blue-50 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
                         onClick={() => setIsFailureOpen(false)}
@@ -152,7 +168,7 @@ export default function Signup() {
                         className="inline-flex items-center gap-2 rounded-md bg-blue-400 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-blue-500 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
                         onClick={() => navigate('/login')}
                       >
-                        Log in with the existing user
+                        Mevcut kullanıcı adıyla giriş yap
                       </Button>
                     </div>
                   </div>
@@ -166,8 +182,8 @@ export default function Signup() {
         <div
           id="page-container"
           className={
-            'bg-image flex h-screen sm:items-center justify-center bg-transparent overflow-y-hidden ' +
-            (isSuccessOpen || isFailureOpen ? 'blur-[2px] ' : '')
+            'bg-image flex h-screen justify-center overflow-y-hidden bg-transparent sm:items-center ' +
+            (isSuccessOpen || isFailureOpen ? 'blur-[2px]' : '')
           }
         >
           <div id="main" className="rounded-lg">
@@ -182,9 +198,7 @@ export default function Signup() {
                     className="rounded-t-lg bg-stone-50 px-16 py-6 text-center"
                   >
                     <h1 className="text-slate-700">Merhaba!</h1>
-                    <h2 className="text-slate-400">
-                      {""}
-                    </h2>
+                    <h2 className="text-slate-400">{''}</h2>
                   </div>
                   {
                     <form
@@ -195,7 +209,32 @@ export default function Signup() {
                         <div>
                           <div>
                             <input
-                              type="email"
+                              type="text"
+                              id="firstName"
+                              name="firstName"
+                              value={signupData.firstName}
+                              onChange={handleSignupInputs}
+                              placeholder=" "
+                              required
+                            />
+                            <label htmlFor="firstName">Ad</label>
+                          </div>
+                          <div>
+                            <input
+                              type="text"
+                              id="lastName"
+                              name="lastName"
+                              value={signupData.lastName}
+                              onChange={handleSignupInputs}
+                              maxLength={10}
+                              placeholder=" "
+                              required
+                            />
+                            <label htmlFor="lastName">Soyad</label>
+                          </div>
+                          <div>
+                            <input
+                              type="string"
                               id="username"
                               name="username"
                               value={signupData.username}
@@ -205,32 +244,21 @@ export default function Signup() {
                               placeholder=" "
                               required
                             />
-                            <label htmlFor="username">E-posta</label>
+                            <label htmlFor="username">Kullanıcı Adı</label>
                           </div>
                           <div>
                             <input
-                              type="text"
-                              id="name"
-                              name="name"
-                              value={signupData.name}
+                              type="email"
+                              id="email"
+                              name="email"
+                              value={signupData.email}
                               onChange={handleSignupInputs}
+                              minLength={3}
+                              maxLength={20}
                               placeholder=" "
                               required
                             />
-                            <label htmlFor="name">Ad</label>
-                          </div>
-                          <div>
-                            <input
-                              type="text"
-                              id="surname"
-                              name="surname"
-                              value={signupData.surname}
-                              onChange={handleSignupInputs}
-                              maxLength={10}
-                              placeholder=" "
-                              required
-                            />
-                            <label htmlFor="surname">Soyad</label>
+                            <label htmlFor="email">E-posta</label>
                           </div>
                           <div className="">
                             <input
@@ -239,8 +267,8 @@ export default function Signup() {
                               name="password"
                               value={signupData.password}
                               onChange={handleSignupInputs}
-                              minLength={6}
-                              maxLength={20}
+                              minLength={8}
+                              maxLength={30}
                               placeholder=" "
                               required
                             />
@@ -248,10 +276,10 @@ export default function Signup() {
                           </div>
                           {/*<div className="relative mt-3 pb-6">
                             <div className="absolute left-3 top-[-26px] text-slate-400">
-                              Rol
+                            Rol
                             </div>
                             <select
-                              className=" w-full rounded-md bg-slate-50 py-2 pl-4 text-sky-800"
+                            className=" w-full rounded-md bg-slate-50 py-2 pl-4 text-sky-800"
                               id="role"
                               name="role"
                               value={signupData.role}
