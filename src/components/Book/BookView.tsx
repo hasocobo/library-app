@@ -111,14 +111,21 @@ const BookView = () => {
           </section>
           <div>
             <div className="flex items-center gap-2">
+              { book.quantity > 0 ?
               <i
-                className={`material-symbols-outlined relative top-[-3px] flex size-6 p-2 items-center justify-center rounded-full bg-green-100 font-extralight text-green-700`}
+                className={`material-symbols-outlined relative top-[-5px] flex size-6 p-2 items-center justify-center rounded-full font-extralight text-green-700`}
               >
-                check
+                check_circle
               </i>
-
+              :
+              <i
+              className={`material-symbols-outlined relative top-[-5px] flex size-6 p-2 text-red-700 items-center justify-center rounded-full font-extralight`}
+            >
+              error
+            </i>
+}
               <p className=" text-sm text-slate-600 mb-3">
-                Kitap ödünç alınmak için uygun
+              { book.quantity > 0 ? "Kitap ödünç alınmak için uygun" : "Kitap ödünç almak için mevcut değil" }
               </p>
             </div>
             <Button

@@ -7,7 +7,7 @@ export default function UserIcon({ onClick, user }) {
         justify-center rounded-[50%] border bg-sky-50 hover:cursor-pointer
         "
       >
-        <div className="absolute">{user.firstName && (user.firstName.charAt(0) || user.pfp)}</div>
+        <div className="absolute">{user && (user.firstName && (user.firstName.charAt(0) || user.pfp))}</div>
       </div>
     </div>
   )

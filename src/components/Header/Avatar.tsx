@@ -8,7 +8,7 @@ const allowedRoles = ['engineer', 'admin'];
 export default function Avatar({ user }) {
   const [expanded, setExpanded] = useState(false);
   const popoverRef = useRef(null);
-  const role = user.roles[0]?.charAt(0).toUpperCase() + user.roles[0]?.slice(1);
+  const role: string = user?.roles[0]?.charAt(0).toUpperCase() + user?.roles[0]?.slice(1);
 
   useEffect(() => {
     expanded
@@ -39,7 +39,7 @@ export default function Avatar({ user }) {
               <UserIcon user={user} />
               <div className="flex flex-col">
                 <p className="font-semibold text-slate-700">
-                  {user.firstName && user.firstName + ' ' + user.lastName}
+                  {user && (user.firstName && user.firstName + ' ' + user.lastName)}
                 </p>
                 <p className="font-normal text-slate-500">{role}</p>
               </div>

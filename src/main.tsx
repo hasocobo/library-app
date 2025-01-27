@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Login from './pages/Login/Login.tsx';
 import Signup from './pages/Login/Signup.tsx';
 import { UserProvider } from './context/UserProvider.tsx';
-import BookList from './pages/Login/BookList.tsx';
+import BookList from './pages/BookList.tsx';
 import BookView from './components/Book/BookView.tsx';
 
 const router = createBrowserRouter([

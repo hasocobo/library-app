@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import TBook from '../../types/Book';
-import Book from '../../components/Book/Book';
+import TBook from '../types/Book';
+import Book from '../components/Book/Book';
 
 const exampleBooks: TBook[] = [
   {

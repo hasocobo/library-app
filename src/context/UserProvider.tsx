@@ -12,16 +12,16 @@ type User = {
   roles: string[]; // Roles as an array of strings
 };
 
-const initialUser: User = {
+/*const initialUser: User = {
   id: '',
   username: '',
   email: '',
-  firstName: 'Hasan',
-  lastName: 'Çoban',
+  firstName: 'Ziyaretçi',
+  lastName: 'Ziyaretçi',
   dateOfBirth: '',
   role: 'admin',
   roles: [],
-};
+}; */
 
 type UserContextType = {
   user: User;
@@ -34,12 +34,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(() => {
     // Load user from localStorage if it exists
     const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : initialUser;
+    return storedUser ? JSON.parse(storedUser) : null;
   });
 
   useEffect(() => {
     // Save user to localStorage whenever it changes
-    localStorage.setItem('user', JSON.stringify(user));
   }, [user]);
 
   return (
