@@ -8,7 +8,7 @@ const allowedRoles = ['engineer', 'admin'];
 export default function Avatar({ user }) {
   const [expanded, setExpanded] = useState(false);
   const popoverRef = useRef(null);
-  const role = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+  const role = user.roles[0]?.charAt(0).toUpperCase() + user.roles[0]?.slice(1);
 
   useEffect(() => {
     expanded

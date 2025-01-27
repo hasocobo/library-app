@@ -41,7 +41,8 @@ const Login = () => {
       const { jwtToken, userDetails } = data;
 
       // Store token and user details in localStorage
-      localStorage.setItem('token', jwtToken);
+      localStorage.clear();
+      localStorage.setItem('jwtToken', jwtToken);
       localStorage.setItem('userId', userDetails.id);
       localStorage.setItem('user', JSON.stringify(userDetails));
       localStorage.setItem('roles', JSON.stringify(userDetails.roles));

@@ -10,7 +10,7 @@ export default function SidebarMenu({ isOpen, handleClick }) {
   const [closed, setIsClosed] = useState(true);
 
   const { user } = useUser();
-  const role = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+  const role = user ? (user.roles[0].charAt(0).toUpperCase() + user.roles[0].slice(1)) : "Ziyaretçi";
 
   useEffect(() => {
     if (!isOpen) {
@@ -51,7 +51,7 @@ export default function SidebarMenu({ isOpen, handleClick }) {
               <UserIcon user={user} onClick={undefined} />
               <div className="flex flex-col">
                 <p className="font-semibold text-slate-700">
-                  {user.name + ' ' + user.surname}
+                  {user ? user.firstName + ' ' + user.lastName : 'Ziyaretçi'}
                 </p>
                 <p className="font-normal text-slate-500">{role}</p>
               </div>
@@ -66,7 +66,7 @@ export default function SidebarMenu({ isOpen, handleClick }) {
                 <i className="material-icons text-slate-400">person</i>
                 <p className="text-slate-600">Your Profile</p>
       </Link> */}
-              {allowedRoles.includes(user.role) && (
+              {user && allowedRoles.includes[0] && (
                 <Link
                   to={'/ekle'}
                   className="flex items-center gap-2 px-4 py-3 transition duration-200 hover:bg-slate-50"

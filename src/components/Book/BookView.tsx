@@ -6,7 +6,7 @@ import bookImage from '../../assets/cover.png';
 import { Button } from '@headlessui/react';
 const api = axios.create({
   baseURL: `http://localhost:5109/api/v1/`,
-  headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, "Content-Type": "application/json" }
 });
 const exampleBook: TBook = {
   id: 'fallback-book-001',
@@ -25,6 +25,7 @@ const BookView = () => {
   const [book, setBook] = useState<TBook | null>(exampleBook);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dueDate, setDueDate] = useState<Date | null>(null);
   const { bookId } = useParams();
 
   const navigate = useNavigate();
@@ -52,12 +53,19 @@ const BookView = () => {
     }
   }, [bookId]);
 
-  const handleBorrowBook = (event: React.FormEvent) => {
+  const handleBorrowBook = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!localStorage.getItem('token')) navigate('/login');
+    if (!localStorage.getItem('jwtToken')) navigate('/login');
 
     try {
-    } catch (error) {}
+      const response = await api.post(`users/${localStorage.userId}/borrowed-books`, {
+        "bookId": bookId,
+        "dueDate": dueDate
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error("An error occurred when borrowing a book", error);
+    }
   };
 
   if (loading) {
@@ -123,8 +131,9 @@ const BookView = () => {
           <section className="mt-4 rounded-md bg-gray-50 p-4">
             <h3 className="mb-4 text-xl font-semibold">Ek Bilgi</h3>
             <div className="text-sm text-gray-600">
-              <p>Çıktığı Yıl: {book.publishYear}</p>
-              <p>Tür: {book.genreName}</p>
+              <p>Çıktığı Yıl: {book?.publishYear}</p>
+              <p>Tür: {book?.genreName}</p>
+              <p>Mevcut adet: {book?.quantity}</p>
             </div>
 
             <div className="flex flex-wrap gap-2 text-sm">
