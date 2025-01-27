@@ -9,7 +9,7 @@ const api = axios.create({
   headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, "Content-Type": "application/json" }
 });
 const exampleBook: TBook = {
-  id: 'fallback-book-001',
+  bookId: 'fallback-book-001',
   title: 'Untitled Book',
   authorName: 'Unknown Author',
   authorId: 'unknown-author-id',
@@ -113,13 +113,13 @@ const BookView = () => {
             <div className="flex items-center gap-2">
               { book.quantity > 0 ?
               <i
-                className={`material-symbols-outlined relative top-[-5px] flex size-6 p-2 items-center justify-center rounded-full font-extralight text-green-700`}
+                className={`material-symbols-outlined relative z-[-50] top-[-5px] flex size-6 p-2 items-center justify-center rounded-full font-extralight text-green-700`}
               >
                 check_circle
               </i>
               :
               <i
-              className={`material-symbols-outlined relative top-[-5px] flex size-6 p-2 text-red-700 items-center justify-center rounded-full font-extralight`}
+              className={`material-symbols-outlined relative z-[-50] top-[-5px] flex size-6 p-2 text-red-700 items-center justify-center rounded-full font-extralight`}
             >
               error
             </i>

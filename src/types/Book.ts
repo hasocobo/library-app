@@ -1,5 +1,5 @@
 type TBook = {
-  id: string;
+  bookId: string;
   title: string;
   authorName: string;
   authorId: string;

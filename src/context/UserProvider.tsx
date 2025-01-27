@@ -12,17 +12,6 @@ type User = {
   roles: string[]; // Roles as an array of strings
 };
 
-/*const initialUser: User = {
-  id: '',
-  username: '',
-  email: '',
-  firstName: 'Ziyaretçi',
-  lastName: 'Ziyaretçi',
-  dateOfBirth: '',
-  role: 'admin',
-  roles: [],
-}; */
-
 type UserContextType = {
   user: User;
   setUser: React.Dispatch<React.SetStateAction<User>>;

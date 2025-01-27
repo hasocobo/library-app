@@ -8,6 +8,7 @@ import Signup from './pages/Login/Signup.tsx';
 import { UserProvider } from './context/UserProvider.tsx';
 import BookList from './pages/BookList.tsx';
 import BookView from './components/Book/BookView.tsx';
+import BorrowedBookList from './pages/BorrowedBooks/BorrowedBookList.tsx';
 
 const router = createBrowserRouter([
   {
@@ -20,7 +21,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'mybooks',
-        element: <BookList />
+        element: <BorrowedBookList />
       },
       {
         path: 'browse',
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: 'browse/:bookId',
         element: <BookView />
+      },
+      {
+        path: 'genre/:slug',
+        element: <BookList />
       }
     ]
   },

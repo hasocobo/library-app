@@ -6,7 +6,7 @@ const Book = ({ bookElement }: { bookElement: TBook }) => {
   console.log('Image URL:', bookElement.imageUrl);
   return (
     <div>
-      <Link to={`/browse/${bookElement.id}`}>
+      <Link to={`/browse/${bookElement.bookId}`}>
         <div className="md:h-100 h-100 rounded-sm border shadow-sm hover:shadow-md">
           <div id="image" className="h-40 md:h-80">
             <img

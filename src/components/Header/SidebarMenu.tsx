@@ -10,7 +10,6 @@ export default function SidebarMenu({ isOpen, handleClick }) {
   const [closed, setIsClosed] = useState(true);
 
   const { user } = useUser();
-  console.log(user);
   const role = user ? (user.roles[0].charAt(0).toUpperCase() + user.roles[0].slice(1)) : "Ziyaretçi";
 
   useEffect(() => {
@@ -18,7 +17,7 @@ export default function SidebarMenu({ isOpen, handleClick }) {
       // Add a delay before setting isClosing to true
       const timeoutId = setTimeout(() => {
         setIsClosed(true);
-      }, 250); // Adjust the delay as needed
+      }, 250); 
 
       return () => clearTimeout(timeoutId);
     } else {
