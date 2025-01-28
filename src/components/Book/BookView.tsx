@@ -35,7 +35,7 @@ const BookView = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!bookId || !user?.id) return;
+      if (!bookId) return;
 
       setLoading(true);
       setError(null);
@@ -43,7 +43,7 @@ const BookView = () => {
       try {
         const [bookResponse, borrowedBookResponse] = await Promise.all([
           api.get<TBook>(`books/${bookId}`),
-          api
+          user && api
             .get<TBorrowedBook>(`users/${user.id}/borrowed-books/${bookId}`)
             .catch((err) => {
               if (err.response?.status === 404) {
@@ -250,7 +250,7 @@ const BookView = () => {
                 />
                 <Button
                   onClick={handleBorrowBook}
-                  className="mt-4 w-full rounded-lg bg-sky-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-700 disabled:bg-slate-300"
+                  className="mt-4 w-full rounded-sm bg-green-800 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-900 disabled:bg-slate-300"
                   disabled={!dueDate}
                 >
                   Ödünç Al

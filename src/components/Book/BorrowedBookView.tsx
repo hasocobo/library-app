@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '@headlessui/react';
-import TBook from '../../types/Book';
-import bookImage from '../../assets/cover.png';
 import TBorrowedBook from '../../types/BorrowedBook';
-import BorrowingStatus from '../../types/BorrowingStatus';
 import { useUser } from '../../context/UserProvider';
+import bookImage from '../../assets/cover.png';
 
 const api = axios.create({
   baseURL: `http://localhost:5109/api/v1/`,
@@ -17,7 +15,7 @@ const api = axios.create({
 });
 
 const BorrowedBookView = () => {
-  const [book, setBook] = useState<TBook | null>(null);
+  const [book, setBook] = useState<TBorrowedBook | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { borrowedBookId } = useParams();
@@ -32,16 +30,16 @@ const BorrowedBookView = () => {
       setError(null);
 
       try {
-        const borrowedBook = (await api.get<TBook>(`borrowed-books/${borrowedBookId}`)).data;
-
-        setBook(borrowedBook);
+        const response = await api.get<TBorrowedBook>(
+          `borrowed-books/${borrowedBookId}`
+        );
+        setBook(response.data);
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('Veri alınırken hata oluştu:', err);
         setError(
           axios.isAxiosError(err)
-            ? err.response?.data?.message ||
-                'An error occurred while fetching data'
-            : 'An unexpected error occurred'
+            ? err.response?.data?.message || 'Veri alınırken bir hata oluştu'
+            : 'Beklenmeyen bir hata oluştu'
         );
       } finally {
         setLoading(false);
@@ -50,10 +48,6 @@ const BorrowedBookView = () => {
 
     fetchData();
   }, [borrowedBookId, user?.id]);
-
-  const BorrowingStatus = () => {
-    
-  };
 
   if (loading) {
     return (
@@ -90,10 +84,11 @@ const BorrowedBookView = () => {
   return (
     <div className="mx-auto max-w-5xl p-4">
       <div className="flex flex-col gap-8 md:flex-row">
+        {/* Kitap Resmi ve Temel Bilgiler */}
         <div className="md:w-1/3">
           <img
             src={book.imageUrl}
-            alt={`Cover of ${book.title}`}
+            alt={`${book.title} kapak resmi`}
             className="h-[500px] w-full rounded-lg object-cover shadow-lg"
             onError={(e) => {
               const imgElement = e.target as HTMLImageElement;
@@ -101,27 +96,79 @@ const BorrowedBookView = () => {
             }}
           />
           <div className="mt-4 space-y-2">
-            <h2 className="text-2xl font-bold text-slate-700">{book.title}</h2>
+            <h1 className="text-2xl font-bold text-slate-700">{book.title}</h1>
             <p className="text-xl text-slate-500">{book.authorName}</p>
           </div>
         </div>
 
+        {/* Kitap Detayları ve İşlemler */}
         <div className="md:w-2/3">
+          {/* Kitap Açıklaması */}
           <section className="prose max-w-none">
-            <h3 className="mb-2 text-xl font-semibold text-slate-700">
+            <h2 className="mb-2 text-xl font-semibold text-slate-700">
               Kitap Hakkında
-            </h3>
+            </h2>
             <p className="pb-4 text-base leading-relaxed text-slate-600">
               {book.description || 'Bu kitap hakkında mevcut bir açıklama yok.'}
             </p>
           </section>
 
-          {/*<BorrowingStatus />*/}
+          {/* Ödünç Alma Detayları */}
+          <section className="mt-6 rounded-lg bg-slate-50 p-4 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-slate-700">
+              Ödünç Alma Bilgileri
+            </h2>
+            <div className="grid grid-cols-2 gap-4 text-sm text-slate-600">
+              <div>
+                <span className="font-medium">Ödünç Alma Tarihi:</span>{' '}
+                {new Date(book.borrowingDate).toLocaleDateString()}
+              </div>
+              <div>
+                <span className="font-medium">Son Teslim Tarihi:</span>{' '}
+                {book.dueDate
+                  ? new Date(book.dueDate).toLocaleDateString()
+                  : 'Belirtilmemiş'}
+              </div>
+              <div>
+                <span className="font-medium">Durum:</span>{' '}
+                <span
+                  className={`font-semibold ${book.isReturned ? 'text-green-600' : 'text-amber-600'}`}
+                >
+                  {book.isReturned ? 'İade Edildi' : 'Ödünç Alındı'}
+                </span>
+              </div>
+              {book.returningDate && (
+                <div>
+                  <span className="font-medium">İade Tarihi:</span>{' '}
+                  {new Date(book.returningDate).toLocaleDateString()}
+                </div>
+              )}
+              <div>
+                <span className="font-medium">Ceza Ücreti:</span>{' '}
+                {book.penaltyPrice?.toFixed(2)} TL
+              </div>
+              
+            </div>
 
-          <section className="mt-6 rounded-lg bg-slate-50 p-4">
-            <h3 className="mb-4 text-lg font-semibold text-slate-700">
-              Ek Bilgi
-            </h3>
+            {!book.isReturned && (
+              <div className="mt-6">
+                <Button
+                  onClick={() => {
+                    // Kitap iade etme işlemi buraya eklenecek
+                  }}
+                  className="w-full rounded-sm bg-green-700 px-4 py-2 text-sm font-medium font-semibold text-white transition-colors hover:bg-green-800"
+                >
+                  Kitabı İade Et
+                </Button>
+              </div>
+            )}
+          </section>
+
+          {/* Ek Bilgiler */}
+          <section className="mt-6 rounded-lg bg-slate-50 p-4 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-slate-700">
+              Ek Bilgiler
+            </h2>
             <div className="grid grid-cols-2 gap-4 text-sm text-slate-600">
               <div>
                 <span className="font-medium">Yayın Yılı:</span>{' '}

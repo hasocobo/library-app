@@ -93,7 +93,7 @@ const BorrowedBookList = () => {
                 Kitap bulunamadı
               </h3>
               <p className="mt-1 text-center text-sm text-slate-500">
-                Bu türde henüz kitap bulunmamaktadır.
+                Henüz kitap ödünç almadınız. 
               </p>
               <Button
                 className="mt-6 inline-flex items-center gap-2 rounded-md bg-slate-100 px-3 py-1.5 text-sm/6 font-semibold text-slate-700 shadow-sm ring-1 ring-slate-300 hover:bg-slate-50 focus:outline-none data-[hover]:bg-slate-50 data-[open]:bg-slate-100 data-[focus]:outline-1 data-[focus]:outline-slate-700"
