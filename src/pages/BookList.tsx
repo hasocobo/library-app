@@ -5,21 +5,12 @@ import { Button } from '@headlessui/react';
 import Book from '../components/Book/Book';
 import TBook from '../types/Book';
 import TGenre from '../types/Genre';
+import BookSkeleton from '../components/BookSkeleton';
 
 const api = axios.create({
   baseURL: `http://localhost:5109/api/v1/`,
   headers: { 'Content-Type': 'application/json' }
 });
-
-const BookSkeleton = () => (
-  <div className="animate-pulse">
-    <div className="aspect-[2/3] w-full rounded-lg bg-slate-200"></div>
-    <div className="mt-4 space-y-3">
-      <div className="h-4 w-3/4 rounded bg-slate-200"></div>
-      <div className="h-4 w-1/2 rounded bg-slate-200"></div>
-    </div>
-  </div>
-);
 
 const BookList = () => {
   const [books, setBooks] = useState<TBook[] | null>(null);
@@ -80,7 +71,7 @@ const BookList = () => {
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
               {books.map((book) => (
                 <div key={book.bookId}>
-                  <Book bookElement={book} />
+                  <Book bookElement={book} link={`/browse/${book.bookId}`} />
                 </div>
               ))}
             </div>

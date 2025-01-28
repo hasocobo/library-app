@@ -1,8 +1,7 @@
-type TBorrowedBook = {
+import TBook from "./Book";
+
+type TBorrowedBook = TBook & {
   id: string,
-  bookId: string,
-  bookName: string,
-  authorName: string,
   borrowerId: string,
   borrowerName: string,
   borrowingDate: Date,
@@ -11,3 +10,5 @@ type TBorrowedBook = {
   dueDate?: Date,
   penaltyPrice?: number
 }
+
+export default TBorrowedBook;

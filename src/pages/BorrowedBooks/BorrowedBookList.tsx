@@ -3,6 +3,10 @@ import { useEffect, useState } from 'react';
 import TBook from '../../types/Book';
 import Book from '../../components/Book/Book';
 import { useUser } from '../../context/UserProvider';
+import TBorrowedBook from '../../types/BorrowedBook';
+import BookSkeleton from '../../components/BookSkeleton';
+import { Button } from '@headlessui/react';
+import { useNavigate } from 'react-router-dom';
 
 // Axios instance for API calls
 const api = axios.create({
@@ -10,63 +14,11 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Example books for fallback or testing
-const exampleBooks: TBook[] = [
-  {
-    bookId: '1',
-    title: 'The Great Adventure',
-    authorName: 'John Doe',
-    authorId: 'auth1',
-    publishYear: 1999,
-    pageCount: 320,
-    quantity: 10,
-    description: 'An epic tale of discovery and courage.',
-  },
-  {
-    bookId: '2',
-    title: 'Mystery of the Unknown',
-    authorName: 'Jane Smith',
-    authorId: 'auth2',
-    publishYear: 2005,
-    pageCount: 250,
-    quantity: 5,
-    description: 'A gripping mystery that keeps you on edge.',
-  },
-  {
-    bookId: '3',
-    title: 'Journey Through Time',
-    authorName: 'Emily Taylor',
-    authorId: 'auth3',
-    publishYear: 2012,
-    pageCount: 400,
-    quantity: 8,
-    description: 'A time travel adventure spanning centuries.',
-  },
-  {
-    bookId: '4',
-    title: 'The Lost Kingdom',
-    authorName: 'Michael Brown',
-    authorId: 'auth4',
-    publishYear: 2018,
-    pageCount: 500,
-    quantity: 7,
-    description: 'A thrilling quest to uncover a hidden kingdom.',
-  },
-  {
-    bookId: '5',
-    title: 'Cooking with Love',
-    authorName: 'Sophia Johnson',
-    authorId: 'auth5',
-    publishYear: 2010,
-    pageCount: 150,
-    quantity: 15,
-    description: 'Delicious recipes and heartwarming stories.',
-  },
-];
 
 const BorrowedBookList = () => {
-  const [books, setBooks] = useState<TBook[] | null>(null);
+  const [books, setBooks] = useState<TBorrowedBook[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
 
@@ -75,7 +27,7 @@ const BorrowedBookList = () => {
 
     const fetchBooks = async () => {
       try {
-        const response = await api.get<TBook[]>(`users/${user.id}/borrowed-books`);
+        const response = await api.get<TBorrowedBook[]>(`users/${user.id}/borrowed-books`);
         if (isMounted) {
           setBooks(response.data);
           setError(null);
@@ -83,7 +35,6 @@ const BorrowedBookList = () => {
       } catch (error) {
         if (isMounted) {
           setError('Failed to fetch borrowed books. Please try again later.');
-          setBooks(exampleBooks); 
         }
       } finally {
         if (isMounted) {
@@ -99,48 +50,62 @@ const BorrowedBookList = () => {
     };
   }, [user.id]);
 
-  if (loading) {
-    return (
-      <div className="flex w-full h-full justify-center items-center">
-        <p className="text-slate-600">Yükleniyor...</p>
-      </div>
-    );
-  }
-
-  if (!loading && !error && books?.length === 0) {
-    return (
-      <div className="flex w-full h-full justify-center items-center">
-        <p className="text-slate-600 font-semibold">Henüz bir kitap ödünç almadınız.</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex w-full h-full justify-center items-center">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="mx-auto max-w-5xl">
       <div className="px-4 py-6 text-slate-600">
-        <p className="mb-4 text-sm font-semibold tracking-wide text-slate-600">
-          Ödünç Aldığın Tüm Kitaplar
+        <p className="mb-4 text-sm font-semibold tracking-wide text-slate-400">
+          Ödünç Aldığınız Tüm Kitaplar
         </p>
         <div className="p-1">
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-            {books?.map((book) => (
-              <div key={book.bookId}>
-                <Book bookElement={book} />
-              </div>
-            ))}
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+              {[...Array(6)].map((_, index) => (
+                <div key={index}>
+                  <BookSkeleton />
+                </div>
+              ))}
+            </div>
+          ) : books && books.length > 0 ? (
+            <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+              {books.map((book) => (
+                <div key={book.bookId}>
+                  <Book bookElement={book} link={`/mybooks/${book.id}`}/>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 px-6 py-12">
+              <svg
+                className="h-12 w-12 text-slate-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                />
+              </svg>
+              <h3 className="mt-4 text-lg font-medium text-slate-900">
+                Kitap bulunamadı
+              </h3>
+              <p className="mt-1 text-center text-sm text-slate-500">
+                Bu türde henüz kitap bulunmamaktadır.
+              </p>
+              <Button
+                className="mt-6 inline-flex items-center gap-2 rounded-md bg-slate-100 px-3 py-1.5 text-sm/6 font-semibold text-slate-700 shadow-sm ring-1 ring-slate-300 hover:bg-slate-50 focus:outline-none data-[hover]:bg-slate-50 data-[open]:bg-slate-100 data-[focus]:outline-1 data-[focus]:outline-slate-700"
+                onClick={() => navigate("/")}
+              >
+                Ana Sayfaya Dön
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
-
 export default BorrowedBookList;

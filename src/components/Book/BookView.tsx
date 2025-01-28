@@ -4,6 +4,9 @@ import axios from 'axios';
 import { Button } from '@headlessui/react';
 import TBook from '../../types/Book';
 import bookImage from '../../assets/cover.png';
+import TBorrowedBook from '../../types/BorrowedBook';
+import BorrowingStatus from '../../types/BorrowingStatus';
+import { useUser } from '../../context/UserProvider';
 
 const api = axios.create({
   baseURL: `http://localhost:5109/api/v1/`,
@@ -15,12 +18,13 @@ const api = axios.create({
 
 const BookView = () => {
   const [book, setBook] = useState<TBook | null>(null);
+  const [borrowedBook, setBorrowedBook] = useState<TBorrowedBook | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dueDate, setDueDate] = useState<string>('');
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [borrowingSuccess, setBorrowingSuccess] = useState<number>(0); // 0: varsayılan, 1: başarılı, -1: hata
+  const [borrowingSuccess, setBorrowingSuccess] = useState<BorrowingStatus>(0); // 0: varsayılan, 1: başarılı, -1: hata, 2: zaten ödünç alındı
   const { bookId } = useParams();
+  const { user } = useUser();
   const navigate = useNavigate();
 
   const today = new Date();
@@ -30,27 +34,45 @@ const BookView = () => {
     .split('T')[0];
 
   useEffect(() => {
-    const fetchBookDetails = async () => {
+    const fetchData = async () => {
+      if (!bookId || !user?.id) return;
+
+      setLoading(true);
+      setError(null);
+
       try {
-        setLoading(true);
-        setError(null);
-        const response = await api.get<TBook>(`books/${bookId}`);
-        setBook(response.data);
+        const [bookResponse, borrowedBookResponse] = await Promise.all([
+          api.get<TBook>(`books/${bookId}`),
+          api
+            .get<TBorrowedBook>(`users/${user.id}/borrowed-books/${bookId}`)
+            .catch((err) => {
+              if (err.response?.status === 404) {
+                return { data: null };
+              }
+              throw err;
+            })
+        ]);
+
+        setBook(bookResponse.data);
+        if (borrowedBookResponse.data) {
+          setBorrowedBook(borrowedBookResponse.data);
+          setBorrowingSuccess(2);
+        }
       } catch (err) {
+        console.error('Error fetching data:', err);
         setError(
           axios.isAxiosError(err)
             ? err.response?.data?.message ||
-                'An error occurred while fetching book details'
+                'An error occurred while fetching data'
             : 'An unexpected error occurred'
         );
       } finally {
         setLoading(false);
       }
     };
-    if (bookId) {
-      fetchBookDetails();
-    }
-  }, [bookId]);
+
+    fetchData();
+  }, [bookId, user?.id]);
 
   const handleBorrowBook = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -119,14 +141,14 @@ const BookView = () => {
           <div className="mt-6 rounded-lg bg-slate-50 p-4">
             <div className="flex flex-col items-center gap-1">
               <div className="flex items-center justify-center gap-2">
-                <i className="material-symbols-outlined size-8 flex items-center justify-center rounded-full bg-red-100 text-2xl text-red-800">
+                <i className="material-symbols-outlined flex size-8 items-center justify-center rounded-full bg-red-100 text-2xl text-red-800">
                   error
                 </i>
                 <h3 className="text-lg font-semibold text-slate-800">
                   Ödünç Alma İşlemi Başarısız
                 </h3>
               </div>
-              <div className='flex flex-col items-center'>
+              <div className="flex flex-col items-center">
                 <p className="mt-1 text-sm text-slate-500">
                   {!dueDate
                     ? 'Lütfen bir iade tarihi seçin.'
@@ -134,10 +156,45 @@ const BookView = () => {
                 </p>
                 <Button
                   onClick={() => setBorrowingSuccess(0)}
-                  className="mt-4 rounded-sm bg-red-800 font-semibold px-3 py-2 text-sm font-medium text-white hover:bg-red-900"
+                  className="mt-4 rounded-sm bg-red-800 px-3 py-2 text-sm font-medium font-semibold text-white hover:bg-red-900"
                 >
                   Tekrar Dene
                 </Button>
+              </div>
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="mt-6 rounded-lg bg-slate-50 p-4">
+            <div className="flex flex-col items-center gap-1">
+              <div className="flex h-12 items-center justify-center gap-2">
+                <i className="material-symbols-outlined flex size-8 items-center justify-center rounded-full bg-blue-100 text-2xl text-sky-600">
+                  info
+                </i>
+                <h3 className="text-lg font-semibold text-slate-800">
+                  Bu kitap zaten sizde
+                </h3>
+              </div>
+              <div className="flex flex-col items-center">
+                <p className="text-sm text-slate-500 text-center">
+                  Bu kitabı zaten ödünç almışsınız. Kitabı iade etmek veya diğer ödünç aldığınız kitapları görüntülemek için aşağıya tıklayınız.
+                </p>
+                <div className='flex w-full gap-2 justify-center'>
+                  <Button
+                    onClick={() => navigate('/mybooks')}
+                  className="mb-2 mt-4 rounded-sm p-2 text-sm font-semibold border border-sky-700 hover:bg-sky-700 hover:text-white transition text-sky-800"
+                  >
+                    Tüm Kitapları Görüntüle
+                  </Button>
+                  <Button
+                    className="mb-2 mt-4 rounded-sm bg-sky-700 px-2 py-2 text-sm font-semibold transition text-white hover:bg-sky-900"
+                    onClick={() => navigate(`/mybooks/${borrowedBook?.id}`)}
+                  >
+                    Kitaba Git
+                  </Button>
+
+                </div>
               </div>
             </div>
           </div>
@@ -161,7 +218,9 @@ const BookView = () => {
               )}
               <div>
                 <p className="font-medium text-slate-700">
-                  {book && book.quantity > 0 ? 'Ödünç Alınabilir' : 'Mevcut Değil'}
+                  {book && book.quantity > 0
+                    ? 'Ödünç Alınabilir'
+                    : 'Mevcut Değil'}
                 </p>
                 <p className="text-sm text-slate-500">
                   {book && book?.quantity > 0

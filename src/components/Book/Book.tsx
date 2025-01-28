@@ -2,11 +2,10 @@ import TBook from '../../types/Book';
 import { Link } from 'react-router-dom';
 import bookImage from '../../assets/cover.png';
 
-const Book = ({ bookElement }: { bookElement: TBook }) => {
-  console.log('Image URL:', bookElement.imageUrl);
+const Book = ({ bookElement, link }: { bookElement: TBook, link: string }) => {
   return (
     <div>
-      <Link to={`/browse/${bookElement.bookId}`}>
+      <Link to={link}>
         <div className="md:h-100 h-100 rounded-sm border shadow-sm hover:shadow-md">
           <div id="image" className="h-40 md:h-80">
             <img
