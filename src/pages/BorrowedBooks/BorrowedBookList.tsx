@@ -1,12 +1,11 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import TBook from '../../types/Book';
-import Book from '../../components/Book/Book';
 import { useUser } from '../../context/UserProvider';
 import TBorrowedBook from '../../types/BorrowedBook';
 import BookSkeleton from '../../components/BookSkeleton';
 import { Button } from '@headlessui/react';
 import { useNavigate } from 'react-router-dom';
+import BorrowedBook from '../../components/Book/BorrowedBook';
 
 // Axios instance for API calls
 const api = axios.create({
@@ -69,7 +68,7 @@ const BorrowedBookList = () => {
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
               {books.map((book) => (
                 <div key={book.bookId}>
-                  <Book bookElement={book} link={`/mybooks/${book.id}`}/>
+                  <BorrowedBook bookElement={book} link={`/mybooks/${book.id}`}/>
                 </div>
               ))}
             </div>

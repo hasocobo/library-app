@@ -5,6 +5,7 @@ import { Button } from '@headlessui/react';
 import TBorrowedBook from '../../types/BorrowedBook';
 import { useUser } from '../../context/UserProvider';
 import bookImage from '../../assets/cover.png';
+import BorrowingStatus from '../../types/BorrowingStatus';
 
 const api = axios.create({
   baseURL: `http://localhost:5109/api/v1/`,
@@ -20,7 +21,19 @@ const BorrowedBookView = () => {
   const [error, setError] = useState<string | null>(null);
   const { borrowedBookId } = useParams();
   const { user } = useUser();
+  const [borrowingStatus, setBorrowingStatus] = useState<BorrowingStatus>(BorrowingStatus.AlreadyBorrowed);
   const navigate = useNavigate();
+
+  const handleReturnBook = async () => {
+    try {
+      const response = await api.delete(`users/${user.id}/borrowed-books/${borrowedBookId}`);
+      if (response.status === 200)
+        setBorrowingStatus(BorrowingStatus.Returned);
+    } catch (error) {
+      console.log("An error occurred when returning the book", error);
+      setBorrowingStatus(BorrowingStatus.Failed);
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -153,9 +166,7 @@ const BorrowedBookView = () => {
             {!book.isReturned && (
               <div className="mt-6">
                 <Button
-                  onClick={() => {
-                    // Kitap iade etme işlemi buraya eklenecek
-                  }}
+                  onClick={handleReturnBook}
                   className="w-full rounded-sm bg-green-700 px-4 py-2 text-sm font-medium font-semibold text-white transition-colors hover:bg-green-800"
                 >
                   Kitabı İade Et
