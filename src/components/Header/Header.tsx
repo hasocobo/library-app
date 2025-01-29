@@ -166,7 +166,7 @@ export default function Header({ onMenuClick }) {
               </div>
             ) : (
               <div
-                className="cursor-pointer rounded-sm bg-sky-700 px-2 py-1 hover:bg-sky-600 md:block"
+                className="cursor-pointer rounded-sm bg-sky-700 px-3 py-2 hover:bg-sky-600 md:block"
                 onClick={() => navigate('/login')}
               >
                 <p className="text-nowrap text-white">Giriş Yap</p>

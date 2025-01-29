@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '@headlessui/react';
 import Book from '../components/Book/Book';
 import TBook from '../types/Book';
 import TGenre from '../types/Genre';
 import BookSkeleton from '../components/BookSkeleton';
+import PaginationHeader from '../types/PaginationHeader';
+import Pagination from '../components/Pagination';
 
 const api = axios.create({
   baseURL: `http://localhost:5109/api/v1/`,
@@ -13,23 +15,40 @@ const api = axios.create({
 });
 
 const BookList = () => {
+  // Initialize state variables
   const [books, setBooks] = useState<TBook[] | null>(null);
   const [genre, setGenre] = useState<TGenre | null>(null);
+  const [paginationHeader, setPaginationHeader] = useState<PaginationHeader | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Get URL parameters and navigation functions
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Get the page number from URL or default to 1
+  const currentPage = parseInt(searchParams.get('page') || '1');
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         setLoading(true);
+        
         if (slug) {
+          // Handle genre-specific book fetching
           const response = await api.get<TGenre>(`genres/${slug}`);
           setGenre(response.data);
           setBooks(response.data.books);
         } else {
-          const response = await api.get<TBook[]>('books');
+          // Handle paginated book fetching
+          const response = await api.get<TBook[]>(`books`, {
+            params: {
+              PageNumber: currentPage,
+              PageSize: 6
+            }
+          });
           setBooks(response.data);
+          setPaginationHeader(JSON.parse(response.headers["libraryapi-pagination"]));
         }
       } catch (error) {
         console.error('Error while fetching data', error);
@@ -38,17 +57,15 @@ const BookList = () => {
         setLoading(false);
       }
     };
+
     fetchBooks();
-  }, [slug]);
+  }, [slug, currentPage]); // Dependencies now include currentPage instead of page
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <div className="px-4 py-6 text-slate-600">
+    <div className="mx-auto flex h-full max-w-5xl flex-col">
+      <div className="flex grow flex-col px-4 py-6 text-slate-600">
         <p className="mb-4 text-sm font-semibold tracking-wide text-slate-400">
-          <Link
-            to="/"
-            className="text-slate-400 hover:text-slate-500"
-          >
+          <Link to="/" className="text-slate-400 hover:text-slate-500">
             Türler
           </Link>
           {genre && (
@@ -99,12 +116,17 @@ const BookList = () => {
               </p>
               <Button
                 className="mt-6 inline-flex items-center gap-2 rounded-md bg-slate-100 px-3 py-1.5 text-sm/6 font-semibold text-slate-700 shadow-sm ring-1 ring-slate-300 hover:bg-slate-50 focus:outline-none data-[hover]:bg-slate-50 data-[open]:bg-slate-100 data-[focus]:outline-1 data-[focus]:outline-slate-700"
-                onClick={() => navigate("/")}
+                onClick={() => navigate('/')}
               >
                 Ana Sayfaya Dön
               </Button>
             </div>
           )}
+        </div>
+        <div className="flex grow justify-center">
+          <div className="flex items-center gap-1 self-end">
+            <Pagination paginationHeader={paginationHeader}/>
+          </div>
         </div>
       </div>
     </div>
