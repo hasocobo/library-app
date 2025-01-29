@@ -27,13 +27,14 @@ const BorrowedBookView = () => {
   const handleReturnBook = async () => {
     try {
       const response = await api.delete(`users/${user.id}/borrowed-books/${borrowedBookId}`);
-      if (response.status === 200)
+      if (response.status === 200) {
         setBorrowingStatus(BorrowingStatus.Returned);
+      }
     } catch (error) {
       console.log("An error occurred when returning the book", error);
       setBorrowingStatus(BorrowingStatus.Failed);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,6 +62,72 @@ const BorrowedBookView = () => {
 
     fetchData();
   }, [borrowedBookId, user?.id]);
+
+  const ReturnStatus = () => {
+    switch (borrowingStatus) {
+      case BorrowingStatus.Returned:
+        return (
+          <div className="rounded-lg bg-slate-50 p-4">
+            <div className="flex flex-col items-center gap-1">
+              <div className="flex h-12 items-center justify-center gap-2">
+                <i className="material-symbols-outlined flex size-8 items-center justify-center rounded-full bg-green-100 text-2xl text-green-600">
+                  check_circle
+                </i>
+                <h3 className="text-lg font-semibold text-green-800">
+                  İade İşlemi Başarılı
+                </h3>
+              </div>
+              <div className="flex flex-col items-center">
+                <p className="text-sm text-slate-500">
+                  Kitap başarıyla iade edildi.
+                </p>
+                <Button
+                  onClick={() => navigate('/mybooks')}
+                  className="mt-4 rounded-sm bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800"
+                >
+                  Ödünç Aldığım Kitapları Görüntüle
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+      case BorrowingStatus.Failed:
+        return (
+          <div className="rounded-lg bg-slate-50 p-4">
+            <div className="flex flex-col items-center gap-1">
+              <div className="flex items-center justify-center gap-2">
+                <i className="material-symbols-outlined flex size-8 items-center justify-center rounded-full bg-red-100 text-2xl text-red-800">
+                  error
+                </i>
+                <h3 className="text-lg font-semibold text-slate-800">
+                  İade İşlemi Başarısız
+                </h3>
+              </div>
+              <div className="flex flex-col items-center">
+                <p className="mt-1 text-sm text-slate-500">
+                  İade işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin.
+                </p>
+                <Button
+                  onClick={handleReturnBook}
+                  className="mt-4 rounded-sm bg-red-800 px-3 py-2 text-sm font-medium font-semibold text-white hover:bg-red-900"
+                >
+                  Tekrar Dene
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <Button
+            onClick={handleReturnBook}
+            className="w-full rounded-sm bg-green-700 px-4 py-2 text-sm font-medium font-semibold text-white transition-colors hover:bg-green-800"
+          >
+            Kitabı İade Et
+          </Button>
+        );
+    }
+  };
 
   if (loading) {
     return (
@@ -160,17 +227,11 @@ const BorrowedBookView = () => {
                 <span className="font-medium">Ceza Ücreti:</span>{' '}
                 {book.penaltyPrice?.toFixed(2)} TL
               </div>
-              
             </div>
 
             {!book.isReturned && (
               <div className="mt-6">
-                <Button
-                  onClick={handleReturnBook}
-                  className="w-full rounded-sm bg-green-700 px-4 py-2 text-sm font-medium font-semibold text-white transition-colors hover:bg-green-800"
-                >
-                  Kitabı İade Et
-                </Button>
+                <ReturnStatus />
               </div>
             )}
           </section>
