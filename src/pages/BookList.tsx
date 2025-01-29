@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams
+} from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '@headlessui/react';
 import Book from '../components/Book/Book';
@@ -18,29 +23,31 @@ const BookList = () => {
   // Initialize state variables
   const [books, setBooks] = useState<TBook[] | null>(null);
   const [genre, setGenre] = useState<TGenre | null>(null);
-  const [paginationHeader, setPaginationHeader] = useState<PaginationHeader | null>(null);
+  const [paginationHeader, setPaginationHeader] =
+    useState<PaginationHeader | null>(null);
   const [loading, setLoading] = useState(true);
-  
-  // Get URL parameters and navigation functions
+
   const { slug } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Get the page number from URL or default to 1
   const currentPage = parseInt(searchParams.get('page') || '1');
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         setLoading(true);
-        
+
         if (slug) {
-          // Handle genre-specific book fetching
-          const response = await api.get<TGenre>(`genres/${slug}`);
+          const response = await api.get<TGenre>(`genres/${slug}`, {
+            params: {
+              PageNumber: currentPage,
+              PageSize: 6
+            }
+          });
           setGenre(response.data);
           setBooks(response.data.books);
         } else {
-          // Handle paginated book fetching
           const response = await api.get<TBook[]>(`books`, {
             params: {
               PageNumber: currentPage,
@@ -48,7 +55,9 @@ const BookList = () => {
             }
           });
           setBooks(response.data);
-          setPaginationHeader(JSON.parse(response.headers["libraryapi-pagination"]));
+          setPaginationHeader(
+            JSON.parse(response.headers['libraryapi-pagination'])
+          );
         }
       } catch (error) {
         console.error('Error while fetching data', error);
@@ -59,7 +68,7 @@ const BookList = () => {
     };
 
     fetchBooks();
-  }, [slug, currentPage]); // Dependencies now include currentPage instead of page
+  }, [slug, currentPage]);
 
   return (
     <div className="mx-auto flex h-full max-w-5xl flex-col">
@@ -125,7 +134,7 @@ const BookList = () => {
         </div>
         <div className="flex grow justify-center">
           <div className="flex items-center gap-1 self-end">
-            <Pagination paginationHeader={paginationHeader}/>
+            <Pagination paginationHeader={paginationHeader} />
           </div>
         </div>
       </div>

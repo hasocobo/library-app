@@ -1,39 +1,57 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { Button } from '@headlessui/react';
 import { useUser } from '../../context/UserProvider';
 import TBorrowedBook from '../../types/BorrowedBook';
 import BookSkeleton from '../../components/BookSkeleton';
-import { Button } from '@headlessui/react';
-import { useNavigate } from 'react-router-dom';
 import BorrowedBook from '../../components/Book/BorrowedBook';
+import PaginationHeader from '../../types/PaginationHeader';
+import Pagination from '../../components/Pagination';
 
-// Axios instance for API calls
 const api = axios.create({
   baseURL: `http://localhost:5109/api/v1/`,
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 'Content-Type': 'application/json' }
 });
 
-
 const BorrowedBookList = () => {
+  // State declarations with pagination additions
   const [books, setBooks] = useState<TBorrowedBook[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const [paginationHeader, setPaginationHeader] = useState<PaginationHeader | null>(null);
+  
+  // Hooks
+  const navigate = useNavigate();
   const { user } = useUser();
+  const [searchParams] = useSearchParams();
+  
+  // Get current page from URL parameters
+  const currentPage = parseInt(searchParams.get('page') || '1');
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchBooks = async () => {
       try {
-        const response = await api.get<TBorrowedBook[]>(`users/${user.id}/borrowed-books`);
+        setLoading(true);
+        const response = await api.get<TBorrowedBook[]>(`users/${user.id}/borrowed-books`, {
+          params: {
+            PageNumber: currentPage,
+            PageSize: 6
+          }
+        });
+        
         if (isMounted) {
           setBooks(response.data);
+          // Parse pagination header from response
+          setPaginationHeader(JSON.parse(response.headers['libraryapi-pagination']));
           setError(null);
         }
       } catch (error) {
         if (isMounted) {
           setError('Failed to fetch borrowed books. Please try again later.');
+          setBooks([]);
         }
       } finally {
         if (isMounted) {
@@ -44,17 +62,25 @@ const BorrowedBookList = () => {
 
     fetchBooks();
 
+    // Cleanup function
     return () => {
       isMounted = false;
     };
-  }, [user.id]);
+  }, [user.id, currentPage]); // Added currentPage as dependency
 
   return (
     <div className="mx-auto max-w-5xl">
-      <div className="px-4 py-6 text-slate-600">
+      <div className="flex h-full flex-col px-4 py-6 text-slate-600">
         <p className="mb-4 text-sm font-semibold tracking-wide text-slate-400">
           Ödünç Aldığınız Tüm Kitaplar
         </p>
+        
+        {error && (
+          <div className="mb-4 rounded-md bg-red-50 p-4 text-red-700">
+            {error}
+          </div>
+        )}
+
         <div className="p-1">
           {loading ? (
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
@@ -68,7 +94,7 @@ const BorrowedBookList = () => {
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
               {books.map((book) => (
                 <div key={book.bookId}>
-                  <BorrowedBook bookElement={book} link={`/mybooks/${book.id}`}/>
+                  <BorrowedBook bookElement={book} link={`/mybooks/${book.id}`} />
                 </div>
               ))}
             </div>
@@ -92,7 +118,7 @@ const BorrowedBookList = () => {
                 Kitap bulunamadı
               </h3>
               <p className="mt-1 text-center text-sm text-slate-500">
-                Henüz kitap ödünç almadınız. 
+                Henüz kitap ödünç almadınız.
               </p>
               <Button
                 className="mt-6 inline-flex items-center gap-2 rounded-md bg-slate-100 px-3 py-1.5 text-sm/6 font-semibold text-slate-700 shadow-sm ring-1 ring-slate-300 hover:bg-slate-50 focus:outline-none data-[hover]:bg-slate-50 data-[open]:bg-slate-100 data-[focus]:outline-1 data-[focus]:outline-slate-700"
@@ -103,8 +129,18 @@ const BorrowedBookList = () => {
             </div>
           )}
         </div>
+
+        {/* Pagination section */}
+        {books && books.length > 0 && (
+          <div className="flex grow justify-center">
+            <div className="flex items-center gap-1 self-end">
+              <Pagination paginationHeader={paginationHeader} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
 export default BorrowedBookList;
