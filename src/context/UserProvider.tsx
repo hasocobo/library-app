@@ -21,14 +21,15 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(() => {
-    // Load user from localStorage if it exists
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
   useEffect(() => {
-    // Save user to localStorage whenever it changes
-  }, [user]);
+    /*
+    const storedUser = localStorage.getItem('user');
+    setUser(storedUser ? JSON.parse(storedUser) : null);
+  */}, [user]);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

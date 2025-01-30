@@ -10,6 +10,9 @@ import BookList from './pages/BookList.tsx';
 import BookView from './components/Book/BookView.tsx';
 import BorrowedBookList from './pages/BorrowedBooks/BorrowedBookList.tsx';
 import BorrowedBookView from './components/Book/BorrowedBookView.tsx';
+import Unauthorized from './pages/Unauthorized.tsx';
+import PrivateRoute from './components/Authorization/PrivateRoute.tsx';
+import AdminDashboard from './components/Admin/AdminDashboard.tsx';
 
 const router = createBrowserRouter([
   {
@@ -49,8 +52,29 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <Signup />
+    /*element: <PrivateRoute allowedRoles={['ADMIN']} />,
+    children: [
+      {
+        path: 'b',
+        element: <Signup />
+      }
+    ]*/
+  },
+  {
+    path: '/unauthorized',
+    element: <Unauthorized />
   },
 
+  {
+    path: '/admin',
+    element: <PrivateRoute allowedRoles={['Admin']} />,
+    children: [
+      {
+        path: '',
+        element: <AdminDashboard />
+      }
+    ]
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

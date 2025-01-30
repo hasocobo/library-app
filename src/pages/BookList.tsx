@@ -52,7 +52,7 @@ const BookList = () => {
           const response = await api.get<TBook[]>(`books`, {
             params: {
               PageNumber: currentPage,
-              PageSize: 1,
+              PageSize: 6,
               SearchTerm: searchTerm
             }
           });
