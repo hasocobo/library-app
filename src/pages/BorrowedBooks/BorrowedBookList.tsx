@@ -62,15 +62,14 @@ const BorrowedBookList = () => {
 
     fetchBooks();
 
-    // Cleanup function
     return () => {
       isMounted = false;
     };
-  }, [user.id, currentPage]); // Added currentPage as dependency
+  }, [user.id, currentPage]);
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <div className="flex h-full flex-col px-4 py-6 text-slate-600">
+    <div className="mx-auto max-w-5xl flex h-full flex-col">
+      <div className="flex h-full flex-col grow px-4 py-6 text-slate-600">
         <p className="mb-4 text-sm font-semibold tracking-wide text-slate-400">
           Ödünç Aldığınız Tüm Kitaplar
         </p>
@@ -130,7 +129,6 @@ const BorrowedBookList = () => {
           )}
         </div>
 
-        {/* Pagination section */}
         {books && books.length > 0 && (
           <div className="flex grow justify-center">
             <div className="flex items-center gap-1 self-end">

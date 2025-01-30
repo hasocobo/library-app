@@ -20,7 +20,6 @@ const api = axios.create({
 });
 
 const BookList = () => {
-  // Initialize state variables
   const [books, setBooks] = useState<TBook[] | null>(null);
   const [genre, setGenre] = useState<TGenre | null>(null);
   const [paginationHeader, setPaginationHeader] =
@@ -32,6 +31,8 @@ const BookList = () => {
   const [searchParams] = useSearchParams();
 
   const currentPage = parseInt(searchParams.get('page') || '1');
+  const searchTerm = searchParams.get('q') || "";
+  console.log(searchTerm);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -51,7 +52,8 @@ const BookList = () => {
           const response = await api.get<TBook[]>(`books`, {
             params: {
               PageNumber: currentPage,
-              PageSize: 6
+              PageSize: 1,
+              SearchTerm: searchTerm
             }
           });
           setBooks(response.data);
@@ -68,7 +70,7 @@ const BookList = () => {
     };
 
     fetchBooks();
-  }, [slug, currentPage]);
+  }, [slug, currentPage, searchTerm]);
 
   return (
     <div className="mx-auto flex h-full max-w-5xl flex-col">

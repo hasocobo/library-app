@@ -1,5 +1,5 @@
 import PaginationHeader from '../types/PaginationHeader';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const Pagination = ({
   paginationHeader
@@ -9,6 +9,13 @@ const Pagination = ({
   const page = paginationHeader?.PageNumber || 1;
   const totalPages = paginationHeader?.TotalPages || 1;
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const handlePageChange = (newPage: number) => {
+    const currentParams = new URLSearchParams(searchParams);
+    currentParams.set('page', newPage.toString());
+    navigate(`?${currentParams.toString()}`);
+  };
 
   // Generate page numbers, displaying first three pages, ellipsis, and last three pages
   const generatePageNumbers = (): (number | string)[] => {
@@ -37,7 +44,7 @@ const Pagination = ({
     >
       {/* Previous Button */}
       <button
-        onClick={() => navigate(`?page=${page - 1}`)}
+        onClick={() => handlePageChange(page - 1)}
         disabled={page === 1}
         className="group relative flex size-10 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:text-slate-300"
         aria-label="Previous page"
@@ -62,7 +69,7 @@ const Pagination = ({
           return (
             <button
               key={index}
-              onClick={() => navigate(`?page=${pageNumber}`)}
+              onClick={() => handlePageChange(parseInt(pageNumber.toString()))}
               className={`relative flex size-10 items-center justify-center rounded-lg font-medium transition-colors ${
                 pageNumber === page
                   ? 'bg-blue-50 text-blue-600 hover:bg-blue-100'
@@ -78,7 +85,7 @@ const Pagination = ({
 
       {/* Next Button */}
       <button
-        onClick={() => navigate(`?page=${page + 1}`)}
+        onClick={() => handlePageChange(page + 1)}
         disabled={page === totalPages}
         className="group relative flex size-10 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100 disabled:pointer-events-none disabled:text-slate-300"
         aria-label="Next page"
