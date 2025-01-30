@@ -36,18 +36,14 @@ const Login = () => {
         password
       });
 
-      // Destructure the token and user details from the backend response
       const { data } = response;
       const { jwtToken, userDetails } = data;
 
-      // Store token and user details in localStorage
       localStorage.clear();
       localStorage.setItem('jwtToken', jwtToken);
       localStorage.setItem('userId', userDetails.id);
       localStorage.setItem('user', JSON.stringify(userDetails));
-      localStorage.setItem('roles', JSON.stringify(userDetails.roles));
 
-      // Update the user context
       setUser({
         id: userDetails.id,
         username: userDetails.username,
@@ -58,7 +54,7 @@ const Login = () => {
         roles: userDetails.roles
       });
 
-      navigate('/'); // Redirect to the home page
+      navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
       openDialog();

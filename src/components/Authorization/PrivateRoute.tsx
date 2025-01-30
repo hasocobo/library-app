@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useUser } from "../../context/UserProvider";
+import Unauthorized from "../../pages/Unauthorized";
 
 const PrivateRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
   const { user } = useUser();
@@ -9,7 +10,7 @@ const PrivateRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
   }
 
   if (!user.roles.some((item) => allowedRoles.includes(item))) {
-    return <Navigate to={"/unauthorized"} />
+    return <Unauthorized />
   }
 
   return <Outlet />
