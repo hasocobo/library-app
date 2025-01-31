@@ -110,7 +110,6 @@ const Login = () => {
         </Dialog>
       </Transition>
 
-      {/* Login Form */}
       <div
         id="page-container"
         className={`bg-image flex h-screen justify-center overflow-y-hidden bg-transparent sm:items-center ${
@@ -128,7 +127,7 @@ const Login = () => {
                   id="form-greeting"
                   className="rounded-t-lg bg-stone-50 px-16 py-6 text-center"
                 >
-                  <h1 className="text-slate-700">Merhaba!</h1>
+                  <h1 className="text-slate-700">Üye Girişi</h1>
                   <h2 className="text-slate-400">{''}</h2>
                 </div>
                 <form

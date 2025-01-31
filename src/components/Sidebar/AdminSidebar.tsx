@@ -7,7 +7,7 @@ const AdminSidebar = () => {
   const { user } = useUser();
 
   return (
-    <aside className="h-screen w-64 bg-white border-r border-slate-100">
+    <aside className="hidden md:block h-screen w-64 bg-white border-r border-slate-100">
       <div className="flex flex-col items-center border-b p-8 text-center">
         <UserIcon
           style={'h-24 w-24 bg-slate-50'}
