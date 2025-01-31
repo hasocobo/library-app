@@ -162,11 +162,11 @@ export default function Header({ onMenuClick }) {
                               </h3>
                               <div className="space-y-3">
                                 {genres
-                                  .filter((genre) => !genre.parentGenreId) // Filter top-level genres
+                                  .filter((genre) => !genre.parentGenreId)
                                   .map((genre) => (
                                     <Link
                                       key={genre.id}
-                                      to={`/genre/${genre.slug}`} // Use slug in the URL
+                                      to={`/genre/${genre.slug}`}
                                       onClick={close}
                                       className="block rounded-md px-4 py-2 text-slate-700 hover:bg-slate-50"
                                     >

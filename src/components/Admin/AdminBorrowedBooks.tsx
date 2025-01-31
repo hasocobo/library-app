@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  HomeIcon,
+  MoreVertical
+} from 'lucide-react';
 import { Button } from '@headlessui/react';
 import TBorrowedBook from '../../types/BorrowedBook';
 import TableSkeleton from '../TableSkeleton';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
@@ -16,6 +22,10 @@ const AdminBorrowedBooks = () => {
   const [page, setPage] = useState(1);
   const pageSize = 8;
   const [totalPages, setTotalPages] = useState(1);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const paths = location.pathname.slice(1).split('/');
 
   useEffect(() => {
     const fetchBorrowedBooks = async () => {
@@ -45,12 +55,31 @@ const AdminBorrowedBooks = () => {
 
   return (
     <div className="mx-auto max-w-7xl p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-800">
-          Tüm Ödünç Alınan Kitaplar
-        </h2>
+      <div className="flex items-center justify-between">
+        <nav className="flex items-center gap-2">
+          <HomeIcon
+            opacity={0.8}
+            onClick={() => navigate('/')}
+            className="hover:cursor-pointer hover:opacity-95"
+          />
+          {paths.map((path, i) => (
+            <span
+              className="font-semibold text-slate-600 opacity-75 hover:cursor-pointer hover:opacity-95"
+              onClick={() => navigate(i === 0 ? '/admin' : `/admin/${path}`)} // if admin -> navigate(/admin) else navigate(/admin/path)
+            >
+              {' '}
+              {'>'} {path.toUpperCase()[0] + path.slice(1)}
+            </span>
+          ))}
+        </nav>
+        <Button className="flex items-center gap-1 rounded-sm bg-sky-800 p-2 text-sky-800 hover:bg-sky-900">
+          <i className="material-symbols-outlined text-white">add</i>
+          <span className="font-semibold text-white">Ödünç Kitap Ekle</span>
+        </Button>
       </div>
-
+      <div className="mb-2 mt-4 flex items-center justify-between">
+        <h2 className="text-lg font-bold text-gray-800">Tüm Ödünç Alınan Kitaplar</h2>
+      </div>
       <div className="relative mb-4">
         <input
           type="text"

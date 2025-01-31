@@ -5,11 +5,13 @@ import {
   Plus,
   MoreVertical,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  HomeIcon
 } from 'lucide-react';
 import TBook from '../../types/Book';
 import { Button } from '@headlessui/react';
 import TableSkeleton from '../TableSkeleton';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
@@ -20,8 +22,12 @@ const AdminBooks = () => {
   const [books, setBooks] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const pageSize = 8;
   const [totalPages, setTotalPages] = useState(1);
+
+  const pageSize = 8;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const paths = location.pathname.slice(1).split('/');
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -51,12 +57,30 @@ const AdminBooks = () => {
 
   return (
     <div className="mx-auto max-w-7xl p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-semibold text-gray-800">Kitap Yönetimi</h2>
+      <div className="flex items-center justify-between">
+        <nav className="flex items-center gap-2">
+          <HomeIcon
+            opacity={0.8}
+            onClick={() => navigate('/')}
+            className="hover:cursor-pointer hover:opacity-95"
+          />
+          {paths.map((path, i) => (
+            <span
+              className="font-semibold text-slate-600 opacity-75 hover:cursor-pointer hover:opacity-95"
+              onClick={() => navigate(i === 0 ? '/admin' : `/admin/${path}`)} // if admin -> navigate(/admin) else navigate(/admin/path)
+            >
+              {' '}
+              {'>'} {path.toUpperCase()[0] + path.slice(1)}
+            </span>
+          ))}
+        </nav>
         <Button className="flex items-center gap-1 rounded-sm bg-sky-800 p-2 text-sky-800 hover:bg-sky-900">
           <i className="material-symbols-outlined text-white">add</i>
           <span className="font-semibold text-white">Kitap Ekle</span>
         </Button>
+      </div>
+      <div className="mb-2 mt-4 flex items-center justify-between">
+        <h2 className="text-lg font-bold text-gray-800">Tüm Kitaplar</h2>
       </div>
       <div className="relative mb-4">
         <input
@@ -132,7 +156,7 @@ const AdminBooks = () => {
           <ChevronLeft size={18} />
         </button>
 
-        <span className="font-semibold text-gray-700 flex grow justify-center flex">
+        <span className="flex grow justify-center font-semibold text-gray-700">
           Sayfa {page} / {totalPages}
         </span>
 
