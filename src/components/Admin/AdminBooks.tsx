@@ -12,12 +12,15 @@ import TBook from '../../types/Book';
 import { Button } from '@headlessui/react';
 import TableSkeleton from '../TableSkeleton';
 import { useLocation, useNavigate } from 'react-router-dom';
+import BookCreationPanel from './Panels/AdminBookCreationPanel';
+import AdminBookCreationPanel from './Panels/AdminBookCreationPanel';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
 });
 
 const AdminBooks = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [books, setBooks] = useState([]);
   const [search, setSearch] = useState('');
@@ -74,10 +77,11 @@ const AdminBooks = () => {
             </span>
           ))}
         </nav>
-        <Button className="flex items-center gap-1 rounded-sm bg-sky-800 p-2 text-sky-800 hover:bg-sky-900">
+        {/*<Button className="flex items-center gap-1 rounded-sm bg-sky-800 p-2 text-sky-800 hover:bg-sky-900">
           <i className="material-symbols-outlined text-white">add</i>
           <span className="font-semibold text-white">Kitap Ekle</span>
-        </Button>
+        </Button>*/}
+          <AdminBookCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
       </div>
       <div className="mb-2 mt-4 flex items-center justify-between">
         <h2 className="text-lg font-bold text-gray-800">Tüm Kitaplar</h2>

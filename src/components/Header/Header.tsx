@@ -255,12 +255,12 @@ export default function Header({ onMenuClick }) {
               </div>
             )}
 
-            {user.roles.includes('Admin') && (
+            {user && user.roles.includes('Admin') && (
               <div
                 onClick={() => navigate('/admin/books')}
                 className="bg-rounded-xl absolute right-10 ml-2 hidden cursor-pointer items-center justify-center gap-1 rounded-sm p-2 hover:bg-slate-100 md:flex"
               >
-                <i className="material-symbols-outlined text-lg text-slate-700">
+                <i className="material-symbols-outlined text-lg text-slate-500">
                   arrow_forward
                 </i>
                 <div className="text-nowrap text-sm font-semibold tracking-tight text-slate-700">

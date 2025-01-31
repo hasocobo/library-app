@@ -32,7 +32,6 @@ const BookList = () => {
 
   const currentPage = parseInt(searchParams.get('page') || '1');
   const searchTerm = searchParams.get('q') || "";
-  console.log(searchTerm);
 
   useEffect(() => {
     const fetchBooks = async () => {
