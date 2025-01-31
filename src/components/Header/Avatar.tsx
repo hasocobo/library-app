@@ -30,7 +30,7 @@ export default function Avatar({ user }) {
       <UserIcon onClick={() => setExpanded(!expanded)} user={user} style={""} />
       {expanded && (
         <div
-          className="absolute z-[9999]!important right-[-20px] top-[65px] flex flex-col rounded-md border bg-white shadow sm:block sm:w-60"
+          className="absolute z-[9999]!important right-[-60px] top-[65px] flex flex-col rounded-md border bg-white shadow sm:block sm:w-60"
           style={{ zIndex: 9999, backgroundColor: 'white' }} 
         >
           <header className="border-b relative z-[9999]!important">

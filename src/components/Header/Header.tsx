@@ -257,7 +257,7 @@ export default function Header({ onMenuClick }) {
 
             {user.roles.includes('Admin') && (
               <div
-                onClick={() => navigate('/admin')}
+                onClick={() => navigate('/admin/books')}
                 className="bg-rounded-xl absolute right-10 ml-2 hidden cursor-pointer items-center justify-center gap-1 rounded-sm p-2 hover:bg-slate-100 md:flex"
               >
                 <i className="material-symbols-outlined text-lg text-slate-700">
