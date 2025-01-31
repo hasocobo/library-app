@@ -13,6 +13,10 @@ import BorrowedBookView from './components/Book/BorrowedBookView.tsx';
 import Unauthorized from './pages/Unauthorized.tsx';
 import PrivateRoute from './components/Authorization/PrivateRoute.tsx';
 import AdminDashboard from './components/Admin/AdminDashboard.tsx';
+import AdminBooks from './components/Admin/AdminBooks.tsx';
+import AdminBorrowedBooks from './components/Admin/AdminBorrowedBooks.tsx';
+import AdminUserManagement from './components/Admin/AdminUserManagement.tsx';
+import AdminGenres from './components/Admin/AdminGenres.tsx';
 
 const router = createBrowserRouter([
   {
@@ -76,6 +80,22 @@ const router = createBrowserRouter([
           {
             path: 'browse',
             element: <BookList />
+          },
+          {
+            path: 'books',
+            element: <AdminBooks />
+          },
+          {
+            path: 'borrowedbooks',
+            element: <AdminBorrowedBooks />
+          },
+          {
+            path: 'users',
+            element: <AdminUserManagement />
+          },
+          {
+            path: 'genres',
+            element: <AdminGenres />
           }
         ]
       }

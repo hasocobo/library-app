@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Dialog,
@@ -15,6 +15,10 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.clear();
+  }, [])
 
   const { setUser } = useUser();
   const navigate = useNavigate();

@@ -1,33 +1,14 @@
 import {
-  Link,
   useLocation,
   useNavigate,
   useSearchParams
 } from 'react-router-dom';
-import NavItem from './NavItem';
 import Avatar from './Avatar';
 import { useUser } from '../../context/UserProvider';
-import {
-  Popover,
-  PopoverButton,
-  PopoverPanel,
-  Transition
-} from '@headlessui/react';
 import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
-import TGenre from '../../types/Genre';
-
-const api = axios.create({
-  baseURL: `http://localhost:5109/api/v1/`,
-  headers: { 'Content-Type': 'application/json' }
-});
-
 export default function AdminHeader({ onMenuClick }) {
   const { user } = useUser();
-  const location = useLocation();
-  let pageName = location.pathname.slice(1).split('/')[0];
 
-  const [genres, setGenres] = useState<TGenre[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
   const [isFocused, setIsFocused] = useState(false);
@@ -41,17 +22,6 @@ export default function AdminHeader({ onMenuClick }) {
     }
   }, []);
 
-  useEffect(() => {
-    const fetchGenres = async () => {
-      try {
-        const response = await api.get('genres');
-        const data = response.data;
-        setGenres(data);
-      } catch (err) {}
-    };
-
-    fetchGenres();
-  }, []);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -115,7 +85,7 @@ export default function AdminHeader({ onMenuClick }) {
                       }}
                       onFocus={() => setIsFocused(true)}
                       onBlur={() => setIsFocused(false)}
-                      placeholder="Kitap Ara"
+                      placeholder="Tüm Kitaplarda Ara"
                       className="w-full h-12 rounded-lg border border-slate-200 pl-10 pr-12 text-sm text-slate-600 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                     />
                     <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">

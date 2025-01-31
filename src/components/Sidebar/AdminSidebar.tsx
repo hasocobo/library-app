@@ -25,7 +25,7 @@ const AdminSidebar = () => {
           { to: '/admin/books', icon: 'library_books', label: 'Kitaplar' },
           { to: '/admin/genres', icon: 'category', label: 'Kitap Türleri' },
           { to: '/admin/users', icon: 'group', label: 'Kullanıcılar' },
-          { to: '/admin/borrowed', icon: 'menu_book', label: 'Ödünç Kitaplar' }
+          { to: '/admin/borrowedbooks', icon: 'menu_book', label: 'Ödünç Kitaplar' }
         ].map(({ to, icon, label }) => (
           <Link
             key={to}
