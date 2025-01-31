@@ -91,8 +91,8 @@ const BorrowedBookList = () => {
             </div>
           ) : books && books.length > 0 ? (
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-              {books.map((book) => (
-                <div key={book.bookId}>
+              {books.map((book, index) => (
+                <div key={index}>
                   <BorrowedBook bookElement={book} link={`/mybooks/${book.id}`} />
                 </div>
               ))}

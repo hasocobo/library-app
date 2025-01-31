@@ -95,57 +95,43 @@ export default function AdminHeader({ onMenuClick }) {
             >
               menu
             </i>
-            <div className="hidden h-full w-full items-center justify-start md:flex">
-              <div className="flex h-full items-center gap-4">
-                <NavItem
-                  icon={'settings'}
-                  name={'Admin İşlemleri'}
-                  link={'/admin'}
-                  iconStyle={
-                    pageName === '' ? 'text-slate-300' : 'text-slate-300'
-                  }
-                  textStyle={
-                    pageName === '' ? 'text-sky-700' : 'text-slate-600'
-                  }
-                  style={pageName === 'admin' ? 'selected' : ''}
-                  onClick={undefined}
-                />
-                
-              </div>
+            <div className="hidden h-full grow items-center justify-start md:flex">
               {/* Search Bar */}
               <div className="relative mr-8 hidden grow items-center justify-center md:flex">
-                <div className="relative">
-                  <i className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg text-slate-400">
-                    search
-                  </i>
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        handleSearch();
-                      }
-                    }}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    placeholder="Kitap Ara"
-                    className="h-10 w-96 rounded-lg border border-slate-200 pl-10 pr-12 text-sm text-slate-600 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
-                  />
-                  <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
-                    {isFocused ? (
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-slate-400">enter</span>
-                        <i className="material-symbols-outlined text-base text-slate-400">
-                          keyboard_return
-                        </i>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-1">
-                        <span className="text-base text-slate-400">/</span>
-                      </div>
-                    )}
+                <div className="relative w-full">
+                  <div className='relative w-xl'>
+                    <i className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg text-slate-400">
+                      search
+                    </i>
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                          handleSearch();
+                        }
+                      }}
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
+                      placeholder="Kitap Ara"
+                      className="w-full h-12 rounded-lg border border-slate-200 pl-10 pr-12 text-sm text-slate-600 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    />
+                    <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+                      {isFocused ? (
+                        <div className="flex items-center gap-1">
+                          <span className="text-xs text-slate-400">enter</span>
+                          <i className="material-symbols-outlined text-base text-slate-400">
+                            keyboard_return
+                          </i>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <span className="text-base text-slate-400">/</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

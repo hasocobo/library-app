@@ -28,7 +28,7 @@ export default function Avatar({ user }) {
 
   return (
     <div ref={popoverRef} className="relative">
-      <UserIcon onClick={() => setExpanded(!expanded)} user={user} />
+      <UserIcon onClick={() => setExpanded(!expanded)} user={user} style={""} />
       {expanded && (
         <div
           className="absolute right-[-90px] top-[65px]
@@ -36,7 +36,7 @@ export default function Avatar({ user }) {
         >
           <header className="border-b">
             <div className="flex items-center gap-2 px-4 py-4">
-              <UserIcon user={user} />
+              <UserIcon user={user} style={""} onClick={undefined}/>
               <div className="flex flex-col">
                 <p className="font-semibold text-slate-700">
                   {user && (user.firstName && user.firstName + ' ' + user.lastName)}
