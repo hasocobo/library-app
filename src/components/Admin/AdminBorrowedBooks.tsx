@@ -3,12 +3,14 @@ import axios from 'axios';
 import { ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
 import { Button } from '@headlessui/react';
 import TBorrowedBook from '../../types/BorrowedBook';
+import TableSkeleton from '../TableSkeleton';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
 });
 
 const AdminBorrowedBooks = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -27,6 +29,7 @@ const AdminBorrowedBooks = () => {
         });
 
         setBorrowedBooks(response.data);
+        setLoading(false);
         const paginationHeader = response.headers['libraryapi-pagination'];
         if (paginationHeader) {
           const parsedHeader = JSON.parse(paginationHeader);
@@ -64,62 +67,66 @@ const AdminBorrowedBooks = () => {
         </i>
       </div>
 
-      <div className="overflow-x-auto rounded-lg bg-white shadow">
-        <table className="w-full border-collapse text-left text-sm">
-          <thead className="bg-gray-100">
-            <tr className="text-gray-700">
-              <th className="border p-3">Başlık</th>
-              <th className="border p-3">Yazar</th>
-              <th className="border p-3">Ödünç Alan</th>
-              {/*<th className="border p-3">Ödünç Alan ID</th>*/}
-              <th className="border p-3">Alınma Tarihi</th>
-              <th className="border p-3">Durum</th>
-              <th className="border p-3">İade Tarihi</th>
-              <th className="border p-3">Son Teslim Tarih</th>
-              <th className="border p-3">Ceza Ücreti</th>
-              <th className="border p-3 text-center">İşlemler</th>
-            </tr>
-          </thead>
-          <tbody>
-            {borrowedBooks && borrowedBooks.length > 0 ? (
-              borrowedBooks.map((book: TBorrowedBook) => (
-                <tr key={book.id} className="hover:bg-gray-50">
-                  <td className="border p-3 font-medium">{book.title}</td>
-                  <td className="border p-3">{book.authorName}</td>
-                  <td className="border p-3">{book.borrowerName}</td>
-                  <td className="border p-3">
-                    {new Date(book.borrowingDate).toLocaleDateString()}
-                  </td>
-                  {/*<td className="border p-3">{book.borrowerId}</td>*/}
-                  <td className="border p-3">
-                    {book.isReturned ? 'İade Edildi' : 'Ödünç Alındı'}
-                  </td>
-                  <td className="border p-3">
-                    {book.returningDate
-                      ? new Date(book.returningDate).toLocaleDateString()
-                      : '-'}
-                  </td>
-                  <td className="border p-3">
-                    {new Date(book.dueDate as Date).toLocaleDateString()}
-                  </td>
-                  <td className="border p-3">{book.penaltyPrice}₺</td>
-                  <td className="border p-3 text-center">
-                    <button className="rounded-full p-2 hover:bg-gray-200">
-                      <MoreVertical size={18} className="text-gray-600" />
-                    </button>
+      {loading ? (
+        <TableSkeleton />
+      ) : (
+        <div className="overflow-x-auto rounded-lg bg-white shadow">
+          <table className="w-full border-collapse text-left text-sm">
+            <thead className="bg-gray-100">
+              <tr className="text-gray-700">
+                <th className="border p-3">Başlık</th>
+                <th className="border p-3">Yazar</th>
+                <th className="border p-3">Ödünç Alan</th>
+                {/*<th className="border p-3">Ödünç Alan ID</th>*/}
+                <th className="border p-3">Alınma Tarihi</th>
+                <th className="border p-3">Durum</th>
+                <th className="border p-3">İade Tarihi</th>
+                <th className="border p-3">Son Teslim Tarih</th>
+                <th className="border p-3">Ceza Ücreti</th>
+                <th className="border p-3 text-center">İşlemler</th>
+              </tr>
+            </thead>
+            <tbody>
+              {borrowedBooks && borrowedBooks.length > 0 ? (
+                borrowedBooks.map((book: TBorrowedBook) => (
+                  <tr key={book.id} className="hover:bg-gray-50">
+                    <td className="border p-3 font-medium">{book.title}</td>
+                    <td className="border p-3">{book.authorName}</td>
+                    <td className="border p-3">{book.borrowerName}</td>
+                    <td className="border p-3">
+                      {new Date(book.borrowingDate).toLocaleDateString()}
+                    </td>
+                    {/*<td className="border p-3">{book.borrowerId}</td>*/}
+                    <td className="border p-3">
+                      {book.isReturned ? 'İade Edildi' : 'Ödünç Alındı'}
+                    </td>
+                    <td className="border p-3">
+                      {book.returningDate
+                        ? new Date(book.returningDate).toLocaleDateString()
+                        : '-'}
+                    </td>
+                    <td className="border p-3">
+                      {new Date(book.dueDate as Date).toLocaleDateString()}
+                    </td>
+                    <td className="border p-3">{book.penaltyPrice}₺</td>
+                    <td className="border p-3 text-center">
+                      <button className="rounded-full p-2 hover:bg-gray-200">
+                        <MoreVertical size={18} className="text-gray-600" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={10} className="p-4 text-center text-gray-500">
+                    Ödünç alınan kitap bulunamadı.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={10} className="p-4 text-center text-gray-500">
-                  Ödünç alınan kitap bulunamadı.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div className="mt-4 flex items-center justify-between">
         <button
