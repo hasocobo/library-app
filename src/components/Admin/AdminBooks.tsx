@@ -12,8 +12,9 @@ import TBook from '../../types/Book';
 import { Button } from '@headlessui/react';
 import TableSkeleton from '../TableSkeleton';
 import { useLocation, useNavigate } from 'react-router-dom';
-import BookCreationPanel from './Panels/AdminBookCreationPanel';
 import AdminBookCreationPanel from './Panels/AdminBookCreationPanel';
+import DropdownMenu from './Panels/DropdownMenu';
+import AdminBookUpdatePanel from './Panels/AdminBookUpdatePanel';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
@@ -21,11 +22,14 @@ const api = axios.create({
 
 const AdminBooks = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState<TBook | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState<TBook[]>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
   const pageSize = 8;
   const navigate = useNavigate();
@@ -58,8 +62,23 @@ const AdminBooks = () => {
     fetchBooks();
   }, [search, page]);
 
+  // This function is called when the edit button is clicked.
+  const handleEdit = (book: TBook) => {
+    setSelectedBook(book);
+    setIsEditOpen(true);
+  };
+
   return (
     <div className="mx-auto max-w-7xl p-6">
+      {/* Creation panel for adding new books */}
+      <AdminBookCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
+
+      <AdminBookUpdatePanel
+        isOpen={isEditOpen}
+        setIsOpen={setIsEditOpen}
+        bookToUpdate={selectedBook}
+      />
+
       <div className="flex items-center justify-between">
         <nav className="flex items-center gap-2">
           <HomeIcon
@@ -69,23 +88,29 @@ const AdminBooks = () => {
           />
           {paths.map((path, i) => (
             <span
+              key={i}
               className="font-semibold text-slate-600 opacity-75 hover:cursor-pointer hover:opacity-95"
-              onClick={() => navigate(i === 0 ? '/admin' : `/admin/${path}`)} // if admin -> navigate(/admin) else navigate(/admin/path)
+              onClick={() => navigate(i === 0 ? '/admin' : `/admin/${path}`)}
             >
-              {' '}
-              {'>'} {path.toUpperCase()[0] + path.slice(1)}
+              {'>'} {path.charAt(0).toUpperCase() + path.slice(1)}
             </span>
           ))}
         </nav>
-        {/*<Button className="flex items-center gap-1 rounded-sm bg-sky-800 p-2 text-sky-800 hover:bg-sky-900">
-          <i className="material-symbols-outlined text-white">add</i>
-          <span className="font-semibold text-white">Kitap Ekle</span>
-        </Button>*/}
-          <AdminBookCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
+        <div>
+          <Button
+            onClick={() => setIsOpen(true)}
+            className="flex items-center gap-1 rounded-sm bg-sky-800 p-2"
+          >
+            <i className="material-symbols-outlined text-white">add</i>
+            <span className="font-semibold text-white">Kitap Ekle</span>
+          </Button>
+        </div>
       </div>
+
       <div className="mb-2 mt-4 flex items-center justify-between">
         <h2 className="text-lg font-bold text-gray-800">Tüm Kitaplar</h2>
       </div>
+
       <div className="relative mb-4">
         <input
           type="text"
@@ -101,10 +126,11 @@ const AdminBooks = () => {
           search
         </i>
       </div>
+
       {loading ? (
         <TableSkeleton />
       ) : (
-        <div className="overflow-x-auto rounded-lg bg-white shadow">
+        <div className="rounded-lg bg-white shadow">
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-gray-100">
               <tr className="text-gray-700">
@@ -129,10 +155,22 @@ const AdminBooks = () => {
                     <td className="border p-3">{book.genreName}</td>
                     <td className="border p-3">{book.bookId}</td>
                     <td className="border p-3 text-center">{book.quantity}</td>
-                    <td className="border p-3 text-center">
-                      <button className="rounded-full p-2 hover:bg-gray-200">
-                        <MoreVertical size={18} className="text-gray-600" />
-                      </button>
+                    <td className="relative border p-3 text-center">
+                      <DropdownMenu
+                        isOpen={openDropdownId === book.bookId}
+                        onToggle={() =>
+                          setOpenDropdownId(
+                            openDropdownId === book.bookId ? null : book.bookId
+                          )
+                        }
+                        onEdit={() => handleEdit(book)}
+                        onDelete={() => {
+                          /* handle delete */
+                        }}
+                        onView={() => {
+                          navigate(`/browse/${book.bookId}`);
+                        }}
+                      />
                     </td>
                   </tr>
                 ))
@@ -147,6 +185,7 @@ const AdminBooks = () => {
           </table>
         </div>
       )}
+
       <div className="mt-4 flex items-center justify-between">
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
