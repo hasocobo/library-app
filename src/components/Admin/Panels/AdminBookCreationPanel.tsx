@@ -168,10 +168,10 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-300"
+            enter="ease-in duration-100"
             enterFrom="opacity-0"
             enterTo="opacity-100"
-            leave="ease-in duration-200"
+            leave="ease-in duration-100"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
@@ -189,7 +189,7 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-sm bg-white p-6 p-8 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 p-8 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-semibold leading-6 text-gray-900"
@@ -208,7 +208,7 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
                         id="author"
                         value={selectedAuthorId}
                         onChange={(e) => setSelectedAuthorId(e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
                       >
                         {authors.map((author) => (
                           <option key={author.id} value={author.id}>
@@ -228,7 +228,7 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
                         id="genre"
                         value={selectedGenreId}
                         onChange={(e) => setSelectedGenreId(e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
                       >
                         {genres.map((genre) => (
                           <option key={genre.id} value={genre.id}>
@@ -252,7 +252,7 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
                         onChange={(e) =>
                           handleInputChange('title', e.target.value)
                         }
-                        className={`w-full rounded-sm border ${
+                        className={`w-full rounded-lg border ${
                           errors.title ? 'border-red-500' : 'border-gray-300'
                         } p-3 focus:outline-none focus:ring-2 focus:ring-blue-400`}
                       />
@@ -275,7 +275,7 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
                           onChange={(e) =>
                             handleInputChange('publishYear', e.target.value)
                           }
-                          className={`w-full rounded-sm border ${
+                          className={`w-full rounded-lg border ${
                             errors.publishYear
                               ? 'border-red-500'
                               : 'border-gray-300'
@@ -301,7 +301,7 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
                           onChange={(e) =>
                             handleInputChange('pageCount', e.target.value)
                           }
-                          className={`w-full rounded-sm border ${
+                          className={`w-full rounded-lg border ${
                             errors.pageCount
                               ? 'border-red-500'
                               : 'border-gray-300'
@@ -328,7 +328,7 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
                         onChange={(e) =>
                           handleInputChange('quantity', e.target.value)
                         }
-                        className={`w-full rounded-sm border ${
+                        className={`w-full rounded-lg border ${
                           errors.quantity ? 'border-red-500' : 'border-gray-300'
                         } p-3 focus:outline-none focus:ring-2 focus:ring-blue-400`}
                       />
@@ -352,7 +352,7 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
                         onChange={(e) =>
                           handleInputChange('imageUrl', e.target.value)
                         }
-                        className={`w-full rounded-sm border ${
+                        className={`w-full rounded-lg border ${
                           errors.imageUrl ? 'border-red-500' : 'border-gray-300'
                         } p-3 focus:outline-none focus:ring-2 focus:ring-blue-400`}
                       />
@@ -376,7 +376,7 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
                         onChange={(e) =>
                           handleInputChange('description', e.target.value)
                         }
-                        className={`w-full rounded-sm border ${
+                        className={`w-full rounded-lg border ${
                           errors.imageUrl ? 'border-red-500' : 'border-gray-300'
                         } p-3 focus:outline-none focus:ring-2 focus:ring-blue-400`}
                       />
@@ -386,14 +386,14 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
                   <div className="mt-4 flex justify-end gap-2">
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-sm border border-transparent bg-sky-700 px-4 py-2 text-sm font-medium text-white hover:bg-sky-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      className="inline-flex justify-center rounded-lg border border-transparent bg-sky-700 px-4 py-2 text-sm font-medium text-white hover:bg-sky-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={handleSubmit}
                     >
                       Kaydet
                     </button>
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-sm border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                      className="inline-flex justify-center rounded-lg border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
                       onClick={closeModal}
                     >
                       İptal

@@ -14,7 +14,7 @@ const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
 });
 
-const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpdatePanelProps) => {
+const AdminAuthorUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpdatePanelProps) => {
   // Local state for updateable fields.
   const [book, setBook] = useState({
     title: '',
@@ -149,7 +149,7 @@ const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpda
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left transition-all">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-sm bg-white p-6 text-left transition-all">
                 <Dialog.Title className="text-lg font-semibold leading-6 text-gray-900">
                   Kitap Güncelle
                 </Dialog.Title>
@@ -163,7 +163,7 @@ const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpda
                       type="text"
                       value={book.title}
                       onChange={(e) => handleInputChange('title', e.target.value)}
-                      className={`w-full rounded-lg border ${
+                      className={`w-full rounded-sm border ${
                         errors.title ? 'border-red-500' : 'border-gray-300'
                       } p-3 focus:outline-none focus:ring-2 focus:ring-blue-400`}
                     />
@@ -179,7 +179,7 @@ const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpda
                       type="text"
                       value={book.imageUrl}
                       onChange={(e) => handleInputChange('imageUrl', e.target.value)}
-                      className={`w-full rounded-lg border ${
+                      className={`w-full rounded-sm border ${
                         errors.imageUrl ? 'border-red-500' : 'border-gray-300'
                       } p-3 focus:outline-none focus:ring-2 focus:ring-blue-400`}
                     />
@@ -194,7 +194,7 @@ const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpda
                       id="genre"
                       value={book.genreId}
                       onChange={(e) => handleInputChange('genreId', e.target.value)}
-                      className={`w-full rounded-lg border ${
+                      className={`w-full rounded-sm border ${
                         errors.genreId ? 'border-red-500' : 'border-gray-300'
                       } p-3 focus:outline-none focus:ring-2 focus:ring-blue-400`}
                     >
@@ -217,7 +217,7 @@ const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpda
                         type="number"
                         value={book.pageCount}
                         onChange={(e) => handleInputChange('pageCount', e.target.value)}
-                        className={`w-full rounded-lg border ${
+                        className={`w-full rounded-sm border ${
                           errors.pageCount ? 'border-red-500' : 'border-gray-300'
                         } p-3 focus:outline-none focus:ring-2 focus:ring-blue-400`}
                       />
@@ -233,7 +233,7 @@ const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpda
                         type="number"
                         value={book.quantity}
                         onChange={(e) => handleInputChange('quantity', e.target.value)}
-                        className={`w-full rounded-lg border ${
+                        className={`w-full rounded-sm border ${
                           errors.quantity ? 'border-red-500' : 'border-gray-300'
                         } p-3 focus:outline-none focus:ring-2 focus:ring-blue-400`}
                       />
@@ -246,14 +246,14 @@ const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpda
                   <button
                     type="button"
                     onClick={handleSubmit}
-                    className="inline-flex justify-center rounded-lg border border-transparent bg-sky-700 px-4 py-2 text-sm font-medium text-white hover:bg-sky-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    className="inline-flex justify-center rounded-sm border border-transparent bg-sky-700 px-4 py-2 text-sm font-medium text-white hover:bg-sky-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                   >
                     Güncelle
                   </button>
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="inline-flex justify-center rounded-lg border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                    className="inline-flex justify-center rounded-sm border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
                   >
                     İptal
                   </button>
@@ -267,4 +267,4 @@ const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpda
   );
 };
 
-export default AdminBookUpdatePanel;
+export default AdminAuthorUpdatePanel;

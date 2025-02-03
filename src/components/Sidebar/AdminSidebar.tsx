@@ -30,7 +30,8 @@ const AdminSidebar = () => {
             to: '/admin/borrowedbooks',
             icon: 'menu_book',
             label: 'Ödünç Kitaplar'
-          }
+          },
+          { to: '/admin/authors', icon: 'person_edit', label: 'Yazarlar' },
         ].map(({ to, icon, label }) => (
           <Link
             key={to}

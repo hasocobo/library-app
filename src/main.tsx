@@ -17,6 +17,7 @@ import AdminBooks from './components/Admin/AdminBooks.tsx';
 import AdminBorrowedBooks from './components/Admin/AdminBorrowedBooks.tsx';
 import AdminUserManagement from './components/Admin/AdminUserManagement.tsx';
 import AdminGenres from './components/Admin/AdminGenres.tsx';
+import AdminAuthors from './components/Admin/AdminAuthors.tsx';
 
 const router = createBrowserRouter([
   {
@@ -96,6 +97,10 @@ const router = createBrowserRouter([
           {
             path: 'genres',
             element: <AdminGenres />
+          },
+          {
+            path: 'authors',
+            element: <AdminAuthors />
           }
         ]
       }
