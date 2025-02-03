@@ -10,6 +10,8 @@ import { Button } from '@headlessui/react';
 import TBorrowedBook from '../../types/BorrowedBook';
 import TableSkeleton from '../TableSkeleton';
 import { useNavigate, useLocation } from 'react-router-dom';
+import DropdownMenu from './Panels/DropdownMenu';
+import RequestResult from '../../types/RequestResult';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
@@ -20,12 +22,43 @@ const AdminBorrowedBooks = () => {
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const pageSize = 8;
+  const pageSize = 7;
   const [totalPages, setTotalPages] = useState(1);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [requestResult, setRequestResult] = useState<RequestResult>(
+    RequestResult.Default
+  );
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState<TBorrowedBook | null>(null);
+
 
   const navigate = useNavigate();
   const location = useLocation();
   const paths = location.pathname.slice(1).split('/');
+
+  const handleEdit = (book: TBorrowedBook) => {
+    setSelectedBook(book);
+    setIsEditOpen(true);
+  };
+
+  const showDelete = (book: TBorrowedBook) => {
+    setSelectedBook(book);
+    setIsDeleteOpen(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await api.delete(`books/${selectedBook?.bookId}`);
+      if (response.status === 204) setIsDeleteOpen(false);
+      window.location.reload();
+    } catch (error) {
+      setRequestResult(RequestResult.Failed);
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
     const fetchBorrowedBooks = async () => {
@@ -72,7 +105,7 @@ const AdminBorrowedBooks = () => {
             </span>
           ))}
         </nav>
-        <Button className="flex items-center gap-1 rounded-sm bg-sky-800 p-2 text-sky-800 hover:bg-sky-900">
+        <Button className="flex items-center gap-1 rounded-lg bg-sky-800 p-2 text-sky-800 hover:bg-sky-900">
           <i className="material-symbols-outlined text-white">add</i>
           <span className="font-semibold text-white">Ödünç Kitap Ekle</span>
         </Button>
@@ -99,7 +132,7 @@ const AdminBorrowedBooks = () => {
       {loading ? (
         <TableSkeleton />
       ) : (
-        <div className="overflow-x-auto rounded-lg bg-white shadow">
+        <div className=" rounded-lg bg-white shadow">
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-gray-100">
               <tr className="text-gray-700">
@@ -139,9 +172,19 @@ const AdminBorrowedBooks = () => {
                     </td>
                     <td className="border p-3">{book.penaltyPrice}₺</td>
                     <td className="border p-3 text-center">
-                      <button className="rounded-full p-2 hover:bg-gray-200">
-                        <MoreVertical size={18} className="text-gray-600" />
-                      </button>
+                    <DropdownMenu
+                        isOpen={openDropdownId === book.id}
+                        onToggle={() =>
+                          setOpenDropdownId(
+                            openDropdownId === book.id ? null : book.id
+                          )
+                        }
+                        onEdit={() => handleEdit(book)}
+                        onDelete={() => showDelete(book)}
+                        onView={() => {
+                          navigate(`/browse/${book.bookId}`);
+                        }}
+                      />
                     </td>
                   </tr>
                 ))
@@ -188,6 +231,7 @@ const AdminBorrowedBooks = () => {
       </div>
     </div>
   );
-};
+}
+
 
 export default AdminBorrowedBooks;

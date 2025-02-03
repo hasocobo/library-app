@@ -173,12 +173,12 @@ const BookView = () => {
                   info
                 </i>
                 <h3 className="text-lg font-semibold text-slate-800">
-                  Bu kitap zaten sizde
+                  Bu kitabı ödünç aldınız
                 </h3>
               </div>
               <div className="flex flex-col items-center">
                 <p className="text-sm text-slate-500 text-center">
-                  Bu kitabı zaten ödünç almışsınız. Kitabı iade etmek veya diğer ödünç aldığınız kitapları görüntülemek için aşağıya tıklayınız.
+                  Bu kitap şu anda sizde bulunuyor. Kitabı iade etmek veya diğer ödünç aldığınız kitapları görüntülemek için aşağıya tıklayınız.
                 </p>
                 <div className='flex w-full gap-2 justify-center'>
                   <Button

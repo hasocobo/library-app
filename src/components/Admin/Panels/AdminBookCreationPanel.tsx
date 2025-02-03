@@ -147,6 +147,7 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
         }
       );
       closeModal();
+      window.location.reload();
     } catch (error) {
       console.error('Error creating book:', error);
     }

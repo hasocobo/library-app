@@ -1,13 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import {
-  Search,
-  Plus,
-  MoreVertical,
-  ChevronLeft,
-  ChevronRight,
-  HomeIcon
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, HomeIcon } from 'lucide-react';
 import TBook from '../../types/Book';
 import { Button } from '@headlessui/react';
 import TableSkeleton from '../TableSkeleton';
@@ -16,6 +9,7 @@ import AdminBookCreationPanel from './Panels/AdminBookCreationPanel';
 import DropdownMenu from './Panels/DropdownMenu';
 import AdminBookUpdatePanel from './Panels/AdminBookUpdatePanel';
 import DeleteConfirmationModal from './Panels/DeleteConfirmationModal';
+import RequestResult from '../../types/RequestResult';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
@@ -32,8 +26,11 @@ const AdminBooks = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [requestResult, setRequestResult] = useState<RequestResult>(
+    RequestResult.Default
+  );
 
-  const pageSize = 8;
+  const pageSize = 7;
   const navigate = useNavigate();
   const location = useLocation();
   const paths = location.pathname.slice(1).split('/');
@@ -69,9 +66,20 @@ const AdminBooks = () => {
     setIsEditOpen(true);
   };
 
-  const handleDelete = (book: TBook) => {
+  const showDelete = (book: TBook) => {
     setSelectedBook(book);
     setIsDeleteOpen(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await api.delete(`books/${selectedBook?.bookId}`);
+      if (response.status === 204) setIsDeleteOpen(false);
+      window.location.reload();
+    } catch (error) {
+      setRequestResult(RequestResult.Failed);
+      console.error(error);
+    }
   };
 
   return (
@@ -85,7 +93,14 @@ const AdminBooks = () => {
         bookToUpdate={selectedBook}
       />
 
-      <DeleteConfirmationModal isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} entityName={selectedBook?.title} entityType='Kitabı'/>
+      <DeleteConfirmationModal
+        onConfirm={handleDelete}
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        entityName={selectedBook?.title}
+        entityType="Kitabı"
+        requestResult={requestResult}
+      />
 
       <div className="flex items-center justify-between">
         <nav className="flex items-center gap-2">
@@ -172,7 +187,7 @@ const AdminBooks = () => {
                           )
                         }
                         onEdit={() => handleEdit(book)}
-                        onDelete={() => handleDelete(book)}
+                        onDelete={() => showDelete(book)}
                         onView={() => {
                           navigate(`/browse/${book.bookId}`);
                         }}

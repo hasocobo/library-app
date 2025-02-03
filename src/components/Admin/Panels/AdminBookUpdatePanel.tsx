@@ -32,8 +32,7 @@ const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpda
       setBook({
         title: bookToUpdate.title,
         imageUrl: bookToUpdate.imageUrl || '',
-        // Use genreName as an initial value for genreId.
-        genreId: bookToUpdate.genreName || '',
+        genreId: bookToUpdate.genreId || '',
         pageCount: bookToUpdate.pageCount,
         quantity: bookToUpdate.quantity
       });

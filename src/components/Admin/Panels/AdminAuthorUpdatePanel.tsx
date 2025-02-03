@@ -26,13 +26,11 @@ const AdminAuthorUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUp
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [genres, setGenres] = useState<TGenre[]>([]);
 
-  // When the modal is open and a book is provided, pre-populate the form.
   useEffect(() => {
     if (isOpen && bookToUpdate) {
       setBook({
         title: bookToUpdate.title,
         imageUrl: bookToUpdate.imageUrl || '',
-        // Use genreName as an initial value for genreId.
         genreId: bookToUpdate.genreName || '',
         pageCount: bookToUpdate.pageCount,
         quantity: bookToUpdate.quantity
@@ -112,6 +110,7 @@ const AdminAuthorUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUp
         quantity: Number(book.quantity)
       });
       closeModal();
+      window.location.reload();
     } catch (error) {
       console.error('Error updating book:', error);
     }

@@ -9,6 +9,7 @@ type TBook = {
   description?: string;
   imageUrl?: string;
   genreName?: string;
+  genreId?: string
 };
 
 export default TBook;
