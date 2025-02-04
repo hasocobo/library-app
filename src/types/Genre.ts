@@ -4,6 +4,7 @@ type TGenre = {
   parentGenreId: string,
   id: string,
   name: string,
+  parentGenreName: string,
   slug: string,
   books: TBook[]
 }

@@ -105,6 +105,7 @@ const AdminBorrowedBooks = () => {
         requestResult={requestResult}
         entityType='ödünç alınan kitabı'
         entityName={`${selectedBook?.title}`}
+        setRequestResult={setRequestResult}
       />
       <div className="flex items-center justify-between">
         <nav className="flex items-center gap-2">

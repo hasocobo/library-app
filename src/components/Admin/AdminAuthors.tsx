@@ -106,6 +106,7 @@ const AdminAuthorsDetails = () => {
         onConfirm={handleDelete}
         onClose={() => setIsDeleteOpen(false)}
         requestResult={requestResult}
+        setRequestResult={setRequestResult}
         entityType='yazarı'
         entityName={`${selectedAuthor?.firstName} ${selectedAuthor?.lastName}`}
         warningMessage='Dikkat, bu yazarı silmek onun tüm kitaplarını beraberinde silecektir. Yazarı silmeden önce kitabın ödünç alınmadığından emin olun.'

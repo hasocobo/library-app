@@ -102,6 +102,7 @@ const AdminBooks = () => {
         entityName={selectedBook?.title}
         entityType="kitabı"
         requestResult={requestResult}
+        setRequestResult={setRequestResult}
       />
 
       <div className="flex items-center justify-between">

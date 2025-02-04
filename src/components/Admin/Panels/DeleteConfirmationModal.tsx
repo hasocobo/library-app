@@ -5,6 +5,7 @@ import RequestResult from '../../../types/RequestResult';
 
 type DeleteConfirmationModalProps = {
   isOpen: boolean;
+  setRequestResult: (requestResult: RequestResult) => void;
   onClose: () => void;
   onConfirm: () => void;
   entityName?: string;
@@ -20,6 +21,7 @@ const DeleteConfirmationModal = ({
   entityName,
   entityType,
   warningMessage,
+  setRequestResult,
   requestResult
 }: DeleteConfirmationModalProps) => {
   return (
@@ -99,6 +101,21 @@ const DeleteConfirmationModal = ({
                 requestResult === RequestResult.Failed && 
                 <div>
                   Ürünü silme başarısız oldu, lütfen tekrar deneyiniz.
+                  <div className="mt-5 flex justify-end gap-3">
+                    <button
+                      onClick={onClose}
+                      className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                    >
+                      Kapat
+                    </button>
+                    <button
+                      onClick={() => setRequestResult(RequestResult.Default)}
+                      className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                    >
+                      <Trash size={18} color="white" />
+                      Tekrar Dene
+                    </button>
+                  </div>  
                 </div>
 
               }
