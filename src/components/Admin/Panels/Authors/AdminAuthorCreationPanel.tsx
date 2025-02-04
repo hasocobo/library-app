@@ -1,90 +1,59 @@
 import { Button, Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState, useEffect } from 'react';
 import axios from 'axios';
-import TUser from '../../../../types/User';
-import TBook from '../../../../types/Book';
-import RequestResult from '../../../../types/RequestResult';
 import { AlertCircle } from 'lucide-react';
+import RequestResult from '../../../../types/RequestResult';
 
-type BorrowedBookCreationDto = {
-  userId: string;
-  bookId: string;
-  dueDate: string;
+type AdminAuthorCreationDto = {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  dateOfDeath?: string;
 };
 
 type ValidationErrors = {
-  [key in keyof BorrowedBookCreationDto]?: string;
+  [key in keyof AdminAuthorCreationDto]?: string;
 };
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
 });
 
-const defaultDueDate = new Date();
-defaultDueDate.setDate(defaultDueDate.getDate() + 14); // default due date is 2 weeks from today
-const formattedDueDate = defaultDueDate.toISOString().split('T')[0];
+type AdminAuthorCreationPanelProps = {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+};
 
-const AdminBorrowedBookCreationPanel = ({ isOpen, setIsOpen }) => {
-  const [borrowedBook, setBorrowedBook] = useState<BorrowedBookCreationDto>({
-    userId: '',
-    bookId: '',
-    dueDate: formattedDueDate
+const AdminAuthorCreationPanel = ({ isOpen, setIsOpen }: AdminAuthorCreationPanelProps) => {
+  const [author, setAuthor] = useState<AdminAuthorCreationDto>({
+    firstName: '',
+    lastName: '',
+    dateOfBirth: new Date().toISOString().split('T')[0], // default today, format: YYYY-MM-DD
+    dateOfDeath: undefined
   });
-  const [requestState, setRequestState] = useState<RequestResult>(
-    RequestResult.Default
-  );
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [users, setUsers] = useState<TUser[]>([]);
-  const [books, setBooks] = useState<TBook[]>([]);
+  const [requestState, setRequestState] = useState<RequestResult>(RequestResult.Default);
 
   useEffect(() => {
     if (isOpen) {
+      // Reset state when modal opens
       setRequestState(RequestResult.Default);
-      fetchData();
+      setErrors({});
+      setAuthor({
+        firstName: '',
+        lastName: '',
+        dateOfBirth: new Date().toISOString().split('T')[0],
+        dateOfDeath: undefined
+      });
     }
   }, [isOpen]);
 
-  const fetchData = async () => {
-    try {
-      const [usersResponse, booksResponse] = await Promise.all([
-        api.get('/users'),
-        api.get('/books', {
-          params: {
-            PageSize: 25
-          }
-        })
-      ]);
-
-      setUsers(usersResponse.data);
-      setBooks(booksResponse.data);
-
-      if (usersResponse.data.length > 0) {
-        setBorrowedBook((prev) => ({
-          ...prev,
-          userId: usersResponse.data[0].id
-        }));
-      }
-      if (booksResponse.data.length > 0) {
-        setBorrowedBook((prev) => ({
-          ...prev,
-          bookId: booksResponse.data[0].bookId
-        }));
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setRequestState(RequestResult.Failed);
-    }
-  };
-
   const validateForm = (): boolean => {
     const newErrors: ValidationErrors = {};
-    if (!borrowedBook.userId) newErrors.userId = 'Kullanıcı seçimi gereklidir';
-    if (!borrowedBook.bookId) newErrors.bookId = 'Kitap seçimi gereklidir';
-    if (!borrowedBook.dueDate) {
-      newErrors.dueDate = 'İade tarihi gereklidir';
-    } else if (new Date(borrowedBook.dueDate) <= new Date()) {
-      newErrors.dueDate = 'İade tarihi bugünden sonra olmalıdır';
-    }
+    if (!author.firstName.trim()) newErrors.firstName = 'İsim gereklidir';
+    if (!author.lastName.trim()) newErrors.lastName = 'Soyisim gereklidir';
+    if (!author.dateOfBirth) newErrors.dateOfBirth = 'Doğum tarihi gereklidir';
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -93,14 +62,7 @@ const AdminBorrowedBookCreationPanel = ({ isOpen, setIsOpen }) => {
     if (!validateForm()) return;
 
     try {
-      const response = await api.post(
-        `/users/${borrowedBook.userId}/borrowed-books`,
-        {
-          bookId: borrowedBook.bookId,
-          dueDate: borrowedBook.dueDate
-        }
-      );
-
+      const response = await api.post('/authors', author);
       if (response.status === 201) {
         setRequestState(RequestResult.Success);
         closeModal();
@@ -109,23 +71,25 @@ const AdminBorrowedBookCreationPanel = ({ isOpen, setIsOpen }) => {
         setRequestState(RequestResult.Failed);
       }
     } catch (error) {
-      console.error('Error creating borrowed book record:', error);
+      console.error('Error creating author:', error);
       setRequestState(RequestResult.Failed);
     }
   };
 
   const closeModal = () => {
     setIsOpen(false);
-    setBorrowedBook((prev) => ({ ...prev, userId: '', bookId: '' }));
+    setAuthor({
+      firstName: '',
+      lastName: '',
+      dateOfBirth: new Date().toISOString().split('T')[0],
+      dateOfDeath: new Date().toISOString().split('T')[0]
+    });
     setErrors({});
     setRequestState(RequestResult.Default);
   };
 
-  const handleInputChange = (
-    field: keyof BorrowedBookCreationDto,
-    value: string
-  ) => {
-    setBorrowedBook((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange = (field: keyof AdminAuthorCreationDto, value: string) => {
+    setAuthor((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
@@ -142,12 +106,9 @@ const AdminBorrowedBookCreationPanel = ({ isOpen, setIsOpen }) => {
             <AlertCircle size={24} color="#991b1b" />
             İşlem Başarısız
           </Dialog.Title>
-
           <p className="mt-2 text-sm text-gray-500">
-            Kitap ödünç alınırken hata oluştu. Kitabı daha önce almadığınızdan
-            emin olun.
+            Yazar oluşturulurken hata oluştu. Lütfen bilgileri kontrol edip tekrar deneyin.
           </p>
-
           <div className="mt-4 flex justify-end gap-2">
             <Button
               onClick={() => setRequestState(RequestResult.Default)}
@@ -169,75 +130,78 @@ const AdminBorrowedBookCreationPanel = ({ isOpen, setIsOpen }) => {
     return (
       <>
         <Dialog.Title as="h3" className="text-xl font-semibold text-gray-800">
-          Ödünç Kitap Kaydı Oluştur
+          Yeni Yazar Oluştur
         </Dialog.Title>
         <div className="mt-4 space-y-4">
           <div className="space-y-1">
-            <label
-              htmlFor="user"
-              className="block text-sm font-medium text-gray-500"
-            >
-              Kullanıcı
-            </label>
-            <select
-              id="user"
-              value={borrowedBook.userId}
-              onChange={(e) => handleInputChange('userId', e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-3 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {`${user.firstName} ${user.lastName} - ID: ${user.id.slice(0, 10)}`}
-                </option>
-              ))}
-            </select>
-            {errors.userId && (
-              <p className="text-sm text-red-500">{errors.userId}</p>
-            )}
-          </div>
-
-          <div className="space-y-1">
-            <label
-              htmlFor="book"
-              className="block text-sm font-medium text-gray-500"
-            >
-              Kitap
-            </label>
-            <select
-              id="book"
-              value={borrowedBook.bookId}
-              onChange={(e) => handleInputChange('bookId', e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-3 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              {books.map((book) => (
-                <option key={book.bookId} value={book.bookId}>
-                  {`${book.title} - ${book.authorName}`}
-                </option>
-              ))}
-            </select>
-            {errors.bookId && (
-              <p className="text-sm text-red-500">{errors.bookId}</p>
-            )}
-          </div>
-
-          <div className="space-y-1">
-            <label
-              htmlFor="dueDate"
-              className="block text-sm font-medium text-gray-500"
-            >
-              İade Tarihi
+            <label htmlFor="firstName" className="block text-sm font-medium text-gray-500">
+              İsim
             </label>
             <input
-              id="dueDate"
-              type="date"
-              value={borrowedBook.dueDate}
-              onChange={(e) => handleInputChange('dueDate', e.target.value)}
+              id="firstName"
+              type="text"
+              value={author.firstName}
+              onChange={(e) => handleInputChange('firstName', e.target.value)}
               className={`w-full rounded-lg border ${
-                errors.dueDate ? 'border-red-500' : 'border-gray-300'
+                errors.firstName ? 'border-red-500' : 'border-gray-300'
               } p-3 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400`}
             />
-            {errors.dueDate && (
-              <p className="text-sm text-red-500">{errors.dueDate}</p>
+            {errors.firstName && (
+              <p className="text-sm text-red-500">{errors.firstName}</p>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-500">
+              Soyisim
+            </label>
+            <input
+              id="lastName"
+              type="text"
+              value={author.lastName}
+              onChange={(e) => handleInputChange('lastName', e.target.value)}
+              className={`w-full rounded-lg border ${
+                errors.lastName ? 'border-red-500' : 'border-gray-300'
+              } p-3 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+            />
+            {errors.lastName && (
+              <p className="text-sm text-red-500">{errors.lastName}</p>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-500">
+              Doğum Tarihi
+            </label>
+            <input
+              id="dateOfBirth"
+              type="date"
+              value={author.dateOfBirth}
+              onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+              className={`w-full rounded-lg border ${
+                errors.dateOfBirth ? 'border-red-500' : 'border-gray-300'
+              } p-3 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+            />
+            {errors.dateOfBirth && (
+              <p className="text-sm text-red-500">{errors.dateOfBirth}</p>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <label htmlFor="dateOfDeath" className="block text-sm font-medium text-gray-500">
+              Ölüm Tarihi
+            </label>
+            <input
+              id="dateOfDeath"
+              type="date"
+              value={author.dateOfDeath}
+              onChange={(e) => handleInputChange('dateOfDeath', e.target.value)}
+              className={`w-full rounded-lg border ${
+                errors.dateOfDeath ? 'border-red-500' : 'border-gray-300'
+              } p-3 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+            />
+            {errors.dateOfDeath && (
+              <p className="text-sm text-red-500">{errors.dateOfDeath}</p>
             )}
           </div>
         </div>
@@ -301,4 +265,4 @@ const AdminBorrowedBookCreationPanel = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default AdminBorrowedBookCreationPanel;
+export default AdminAuthorCreationPanel;

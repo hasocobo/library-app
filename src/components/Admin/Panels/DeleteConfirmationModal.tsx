@@ -1,5 +1,4 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { ExclamationTriangleIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { Trash } from 'lucide-react';
 import { Fragment } from 'react';
 import RequestResult from '../../../types/RequestResult';
@@ -49,7 +48,6 @@ const DeleteConfirmationModal = ({
             leaveTo="opacity-0 scale-95"
           >
             <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 shadow-lg transition-all">
-              {/* Close Button */}
               <button
                 onClick={onClose}
                 className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
@@ -58,30 +56,26 @@ const DeleteConfirmationModal = ({
               </button>
               {requestResult === RequestResult.Default && (
                 <div>
-                  {/* Title */}
                   <Dialog.Title
                     as="h3"
                     className="text-xl font-semibold text-gray-800"
                   >
-                    {entityType} silmek istiyor musunuz?
+                    Seçili {entityType} silmek istiyor musunuz?
                   </Dialog.Title>
 
-                  {/* Description */}
                   <p className="mt-2 text-gray-600">
                     <span className="font-semibold text-gray-600">{entityName}</span> adlı{' '}
                     {entityType && entityType.toLowerCase()} silmek
                     istediğinizden emin misiniz?
                   </p>
 
-                  {/* Warning Box */}
                   {warningMessage && (
-                    <div className="mt-4 flex items-start gap-3 rounded-lg bg-orange-100 p-3 text-orange-700">
-                      <ExclamationTriangleIcon className="h-5 w-5" />
+                    <div className="mt-4 flex items-start gap-3 rounded-lg bg-orange-50 p-3 text-orange-700">
+                      <i className='material-symbols-outlined text-red-700'>warning</i>
                       <p className="text-sm">{warningMessage}</p>
                     </div>
                   )}
 
-                  {/* Buttons */}
                   <div className="mt-5 flex justify-end gap-3">
                     <button
                       onClick={onClose}

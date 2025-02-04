@@ -1,6 +1,7 @@
 type TAuthor = {
   id: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   dateOfBirth: string;
   dateOfDeath: string;
   applicationUserId: string | null;

@@ -2,7 +2,7 @@ import TBook from '../../types/Book';
 import { Link } from 'react-router-dom';
 import bookImage from '../../assets/cover.png';
 
-const Book = ({ bookElement, link }: { bookElement: TBook, link: string }) => {
+const Book = ({ bookElement, link }: { bookElement: TBook; link: string }) => {
   return (
     <div>
       <Link to={link}>
@@ -21,7 +21,24 @@ const Book = ({ bookElement, link }: { bookElement: TBook, link: string }) => {
             <p className="text-sm font-semibold text-slate-500">
               {bookElement.authorName}
             </p>
-            <p className="text-sm text-slate-500">{bookElement.publishYear}</p>
+            {/* <p className="text-sm text-slate-500 mt-1">{bookElement.publishYear}</p>*/}
+            <div className="flex items-center gap-1 pt-2">
+              {bookElement.quantity > 0 ? (
+                <>
+                  <i className="material-symbols-outlined text-md text-green-600">
+                    check_circle
+                  </i>
+                  <p className="text-sm text-slate-500">Mevcut</p>
+                </>
+              ) : (
+                <>
+                  <i className="material-symbols-outlined text-md text-red-600">
+                    cancel
+                  </i>
+                  <p className="text-sm text-slate-500">Mevcut Değil</p>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </Link>

@@ -28,25 +28,29 @@ const BorrowedBook = ({
               {bookElement.authorName}
             </p>
             {bookElement.isReturned ? (
-              <div className="flex items-center gap-2 mt-2">
-                <div className='size-6 flex justify-center items-center rounded-full bg-green-100'>
+              <div className="mt-2 flex items-center gap-2">
+                <div className="flex size-6 items-center justify-center rounded-full bg-green-100">
                   <i className="material-symbols-outlined text-green-600">
                     check_circle
                   </i>
                 </div>
-                <div className='text-slate-500 text-sm font-thin'>
+                <div className="text-sm text-slate-500">
                   İade Edildi
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-2 mt-2">
-                <div className='size-6 flex justify-center items-center rounded-full bg-blue-100'>
+              <div className="mt-2 flex items-center gap-2">
+                <div className="flex size-6 items-center justify-center rounded-full bg-blue-100">
                   <i className="material-symbols-outlined text-blue-600">
                     info
                   </i>
                 </div>
-                <div className='text-slate-500 text-sm font-thin'>
-                  Son Teslim: <span className='text-slate-500 text-sm font-normal'>{bookElement.dueDate && new Date(bookElement.dueDate).toLocaleDateString()}</span>
+                <div className="text-sm font-thin text-slate-500">
+                  Son Teslim:{' '}
+                  <span className="text-sm font-normal text-slate-500">
+                    {bookElement.dueDate ?
+                      new Date(bookElement.dueDate).toLocaleDateString(): "Belirtilmemiş"}
+                  </span>
                 </div>
               </div>
             )}

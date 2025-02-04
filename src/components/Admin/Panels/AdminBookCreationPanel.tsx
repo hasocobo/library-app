@@ -213,7 +213,7 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
                       >
                         {authors.map((author) => (
                           <option key={author.id} value={author.id}>
-                            {author.fullName}
+                            {author.firstName + " " + author.lastName}
                           </option>
                         ))}
                       </select>

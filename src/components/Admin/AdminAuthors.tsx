@@ -12,9 +12,11 @@ import TAuthor from '../../types/Author';
 import { Button } from '@headlessui/react';
 import TableSkeleton from '../TableSkeleton';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AdminAuthorCreationPanel from './Panels/AdminAuthorCreationPanel';
+import AdminAuthorCreationPanel from './Panels/Authors/AdminAuthorCreationPanel';
 import DropdownMenu from './Panels/DropdownMenu';
-import AdminAuthorUpdatePanel from './Panels/AdminAuthorUpdatePanel';
+import AdminAuthorUpdatePanel from './Panels/Authors/AdminAuthorUpdatePanel';
+import DeleteConfirmationModal from './Panels/DeleteConfirmationModal';
+import RequestResult from '../../types/RequestResult';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
@@ -23,6 +25,7 @@ const api = axios.create({
 const AdminAuthorsDetails = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedAuthor, setSelectedAuthor] = useState<TAuthor | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [authors, setAuthors] = useState<TAuthor[]>([]);
@@ -30,6 +33,8 @@ const AdminAuthorsDetails = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [requestResult, setRequestResult] = useState<RequestResult>(RequestResult.Default)
+
 
   const pageSize = 8;
   const navigate = useNavigate();
@@ -62,21 +67,48 @@ const AdminAuthorsDetails = () => {
     fetchAuthors();
   }, [search, page]);
 
-  // Called when the edit button is clicked.
   const handleEdit = (author: TAuthor) => {
     setSelectedAuthor(author);
     setIsEditOpen(true);
   };
 
+  
+  const showDelete = (author: TAuthor) => {
+    setSelectedAuthor(author);
+    setIsDeleteOpen(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await api.delete(
+        `authors/${selectedAuthor?.id}`
+      );
+      if (response.status === 204) setIsDeleteOpen(false);
+      window.location.reload();
+    } catch (error) {
+      setRequestResult(RequestResult.Failed);
+      console.error(error);
+    }
+  }
+
   return (
     <div className="mx-auto max-w-7xl p-6">
-      {/* Creation panel for adding new authors */}
       <AdminAuthorCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
 
       <AdminAuthorUpdatePanel
         isOpen={isEditOpen}
         setIsOpen={setIsEditOpen}
-        authorToUpdate={selectedAuthor}
+        author={selectedAuthor}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteOpen}
+        onConfirm={handleDelete}
+        onClose={() => setIsDeleteOpen(false)}
+        requestResult={requestResult}
+        entityType='yazarı'
+        entityName={`${selectedAuthor?.firstName} ${selectedAuthor?.lastName}`}
+        warningMessage='Dikkat, bu yazarı silmek onun tüm kitaplarını beraberinde silecektir. Yazarı silmeden önce kitabın ödünç alınmadığından emin olun.'
       />
 
       <div className="flex items-center justify-between">
@@ -99,7 +131,7 @@ const AdminAuthorsDetails = () => {
         <div>
           <Button
             onClick={() => setIsOpen(true)}
-            className="flex items-center gap-1 rounded-sm bg-sky-800 p-2"
+            className="flex items-center gap-1 rounded-md bg-sky-800 p-2"
           >
             <i className="material-symbols-outlined text-white">add</i>
             <span className="font-semibold text-white">Yazar Ekle</span>
@@ -144,7 +176,9 @@ const AdminAuthorsDetails = () => {
               {authors && authors.length > 0 ? (
                 authors.map((author: TAuthor) => (
                   <tr key={author.id} className="hover:bg-gray-50">
-                    <td className="border p-3 font-medium">{author.fullName}</td>
+                    <td className="border p-3 font-medium">
+                      {author.firstName + ' ' + author.lastName}
+                    </td>
                     <td className="border p-3">{author.dateOfBirth}</td>
                     <td className="border p-3">{author.dateOfDeath || '-'}</td>
                     <td className="relative border p-3 text-center">
@@ -156,11 +190,11 @@ const AdminAuthorsDetails = () => {
                           )
                         }
                         onEdit={() => handleEdit(author)}
-                        onDelete={() => {
-                          /* handle delete */
-                        }}
+                        onDelete={() => showDelete(author)}
                         onView={() => {
-                          navigate(`/browse?q=${author.fullName}`);
+                          navigate(
+                            `/browse?q=${author.firstName + ' ' + author.lastName}`
+                          );
                         }}
                       />
                     </td>

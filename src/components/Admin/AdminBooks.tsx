@@ -100,7 +100,7 @@ const AdminBooks = () => {
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
         entityName={selectedBook?.title}
-        entityType="Kitabı"
+        entityType="kitabı"
         requestResult={requestResult}
       />
 

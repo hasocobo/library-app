@@ -14,6 +14,7 @@ import DropdownMenu from './Panels/DropdownMenu';
 import RequestResult from '../../types/RequestResult';
 import AdminBorrowedBookCreationPanel from './Panels/BorrowedBooks/AdminBorrowedBookCreationPanel';
 import AdminBorrowedBookUpdatePanel from './Panels/BorrowedBooks/AdminBorrowedBookUpdatePanel';
+import DeleteConfirmationModal from './Panels/DeleteConfirmationModal';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
@@ -27,13 +28,14 @@ const AdminBorrowedBooks = () => {
   const pageSize = 7;
   const [totalPages, setTotalPages] = useState(1);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
-  const [requestResult, setRequestResult] = useState<RequestResult>(RequestResult.Default);
+  const [requestResult, setRequestResult] = useState<RequestResult>(
+    RequestResult.Default
+  );
 
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState<TBorrowedBook | null>(null);
-
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,14 +53,16 @@ const AdminBorrowedBooks = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await api.delete(`books/${selectedBook?.bookId}`);
+      const response = await api.delete(
+        `borrowed-books/${selectedBook?.id}`
+      );
       if (response.status === 204) setIsDeleteOpen(false);
       window.location.reload();
     } catch (error) {
       setRequestResult(RequestResult.Failed);
       console.error(error);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchBorrowedBooks = async () => {
@@ -89,7 +93,19 @@ const AdminBorrowedBooks = () => {
   return (
     <div className="mx-auto max-w-7xl p-6">
       <AdminBorrowedBookCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
-      <AdminBorrowedBookUpdatePanel isOpen={isEditOpen} setIsOpen={setIsEditOpen} borrowedBook={selectedBook} />
+      <AdminBorrowedBookUpdatePanel
+        isOpen={isEditOpen}
+        setIsOpen={setIsEditOpen}
+        borrowedBook={selectedBook}
+      />
+      <DeleteConfirmationModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={handleDelete}
+        requestResult={requestResult}
+        entityType='ödünç alınan kitabı'
+        entityName={`${selectedBook?.title}`}
+      />
       <div className="flex items-center justify-between">
         <nav className="flex items-center gap-2">
           <HomeIcon
@@ -107,13 +123,18 @@ const AdminBorrowedBooks = () => {
             </span>
           ))}
         </nav>
-        <Button onClick={() => setIsOpen(true)} className="flex items-center gap-1 rounded-md bg-sky-800 p-2 text-sky-800 hover:bg-sky-900">
+        <Button
+          onClick={() => setIsOpen(true)}
+          className="flex items-center gap-1 rounded-md bg-sky-800 p-2 text-sky-800 hover:bg-sky-900"
+        >
           <i className="material-symbols-outlined text-white">add</i>
           <span className="font-semibold text-white">Ödünç Kitap Ekle</span>
         </Button>
       </div>
       <div className="mb-2 mt-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-gray-800">Tüm Ödünç Alınan Kitaplar</h2>
+        <h2 className="text-lg font-bold text-gray-800">
+          Tüm Ödünç Alınan Kitaplar
+        </h2>
       </div>
       <div className="relative mb-4">
         <input
@@ -134,7 +155,7 @@ const AdminBorrowedBooks = () => {
       {loading ? (
         <TableSkeleton />
       ) : (
-        <div className=" rounded-lg bg-white shadow">
+        <div className="rounded-lg bg-white shadow">
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-gray-100">
               <tr className="text-gray-700">
@@ -174,7 +195,7 @@ const AdminBorrowedBooks = () => {
                     </td>
                     <td className="border p-3">{book.penaltyPrice}₺</td>
                     <td className="border p-3 text-center">
-                    <DropdownMenu
+                      <DropdownMenu
                         isOpen={openDropdownId === book.id}
                         onToggle={() =>
                           setOpenDropdownId(
@@ -233,7 +254,6 @@ const AdminBorrowedBooks = () => {
       </div>
     </div>
   );
-}
-
+};
 
 export default AdminBorrowedBooks;
