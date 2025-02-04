@@ -12,6 +12,8 @@ import TableSkeleton from '../TableSkeleton';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DropdownMenu from './Panels/DropdownMenu';
 import RequestResult from '../../types/RequestResult';
+import AdminBorrowedBookCreationPanel from './Panels/BorrowedBooks/AdminBorrowedBookCreationPanel';
+import AdminBorrowedBookUpdatePanel from './Panels/BorrowedBooks/AdminBorrowedBookUpdatePanel';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
@@ -25,9 +27,7 @@ const AdminBorrowedBooks = () => {
   const pageSize = 7;
   const [totalPages, setTotalPages] = useState(1);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
-  const [requestResult, setRequestResult] = useState<RequestResult>(
-    RequestResult.Default
-  );
+  const [requestResult, setRequestResult] = useState<RequestResult>(RequestResult.Default);
 
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -88,6 +88,8 @@ const AdminBorrowedBooks = () => {
 
   return (
     <div className="mx-auto max-w-7xl p-6">
+      <AdminBorrowedBookCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
+      <AdminBorrowedBookUpdatePanel isOpen={isEditOpen} setIsOpen={setIsEditOpen} borrowedBook={selectedBook} />
       <div className="flex items-center justify-between">
         <nav className="flex items-center gap-2">
           <HomeIcon
@@ -105,7 +107,7 @@ const AdminBorrowedBooks = () => {
             </span>
           ))}
         </nav>
-        <Button className="flex items-center gap-1 rounded-lg bg-sky-800 p-2 text-sky-800 hover:bg-sky-900">
+        <Button onClick={() => setIsOpen(true)} className="flex items-center gap-1 rounded-md bg-sky-800 p-2 text-sky-800 hover:bg-sky-900">
           <i className="material-symbols-outlined text-white">add</i>
           <span className="font-semibold text-white">Ödünç Kitap Ekle</span>
         </Button>

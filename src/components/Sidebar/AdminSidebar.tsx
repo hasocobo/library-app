@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import UserIcon from '../Header/UserIcon';
 import { useUser } from '../../context/UserProvider';
@@ -31,12 +30,13 @@ const AdminSidebar = () => {
             icon: 'menu_book',
             label: 'Ödünç Kitaplar'
           },
-          { to: '/admin/authors', icon: 'person_edit', label: 'Yazarlar' },
+          { to: '/admin/authors', icon: 'person_edit', label: 'Yazarlar' }
         ].map(({ to, icon, label }) => (
           <Link
             key={to}
             to={to}
-            className={`mb-2 flex h-12 items-center justify-center border-sky-800 py-2 text-slate-600 transition hover:border-r-2 hover:text-slate-900 ${to === location.pathname ? 'border-r-2' : ''}`}
+            className={` mb-2 flex h-12 items-center justify-center border-sky-800 py-2 text-slate-600
+               transition hover:border-r-2 hover:text-slate-900 ${to === location.pathname ? 'border-r-2' : ''}`}
           >
             <div className="flex w-2/3 items-center">
               <i className="material-symbols-outlined text-lg text-slate-500">
@@ -51,7 +51,7 @@ const AdminSidebar = () => {
         <div className="flex grow flex-col justify-end">
           <Link
             to="/"
-            className="mb-2 flex hover:text-slate-900 hover:border-r-2 h-12 items-center justify-center gap-2 border-sky-800 py-2 text-slate-600 "
+            className="mb-2 flex h-12 items-center justify-center gap-2 border-sky-800 py-2 text-slate-600 hover:border-r-2 hover:text-slate-900"
           >
             <i className="material-symbols-outlined text-lg text-slate-700">
               arrow_forward

@@ -25,6 +25,7 @@ const AdminBooks = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [requestResult, setRequestResult] = useState<RequestResult>(
     RequestResult.Default
@@ -52,6 +53,7 @@ const AdminBooks = () => {
         if (paginationHeader) {
           const parsedHeader = JSON.parse(paginationHeader);
           setTotalPages(parsedHeader.TotalPages);
+          setTotalCount(parsedHeader.TotalCount);
         }
       } catch (error) {
         console.error('Kitaplar alınırken hata oluştu:', error);
@@ -132,6 +134,7 @@ const AdminBooks = () => {
 
       <div className="mb-2 mt-4 flex items-center justify-between">
         <h2 className="text-lg font-bold text-gray-800">Tüm Kitaplar</h2>
+        <p className='text-gray-500'>Toplam {totalCount} kitap</p>
       </div>
 
       <div className="relative mb-4">
