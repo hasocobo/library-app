@@ -1,5 +1,4 @@
 import {
-  useLocation,
   useNavigate,
   useSearchParams
 } from 'react-router-dom';
@@ -10,7 +9,7 @@ export default function AdminHeader({ onMenuClick }) {
   const { user } = useUser();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [isFocused, setIsFocused] = useState(false);
   const navigate = useNavigate();
   const searchInputRef = useRef<HTMLInputElement>(null);

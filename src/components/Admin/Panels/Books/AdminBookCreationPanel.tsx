@@ -1,8 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState, useEffect } from 'react';
-import axios from 'axios';
-import TAuthor from '../../../types/Author';
-import TGenre from '../../../types/Genre';
+import TAuthor from '../../../../types/Author';
+import TGenre from '../../../../types/Genre';
+import api from '../../../../api';
 
 type BookCreationDto = {
   title: string;
@@ -17,9 +17,7 @@ type ValidationErrors = {
   [key in keyof BookCreationDto]?: string;
 };
 
-const api = axios.create({
-  baseURL: 'http://localhost:5109/api/v1'
-});
+
 
 const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
   const [book, setBook] = useState<BookCreationDto>({

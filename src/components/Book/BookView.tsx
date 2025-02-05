@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '@headlessui/react';
 import TBook from '../../types/Book';
@@ -7,14 +7,7 @@ import bookImage from '../../assets/cover.png';
 import TBorrowedBook from '../../types/BorrowedBook';
 import BorrowingStatus from '../../types/BorrowingStatus';
 import { useUser } from '../../context/UserProvider';
-
-const api = axios.create({
-  baseURL: `http://localhost:5109/api/v1/`,
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-    'Content-Type': 'application/json'
-  }
-});
+import api from '../../api';
 
 const BookView = () => {
   const [book, setBook] = useState<TBook | null>(null);
@@ -43,14 +36,15 @@ const BookView = () => {
       try {
         const [bookResponse, borrowedBookResponse] = await Promise.all([
           api.get<TBook>(`books/${bookId}`),
-          user && api
-            .get<TBorrowedBook>(`users/${user.id}/borrowed-books/${bookId}`)
-            .catch((err) => {
-              if (err.response?.status === 404) {
-                return { data: null };
-              }
-              throw err;
-            })
+          user &&
+            api
+              .get<TBorrowedBook>(`users/${user.id}/borrowed-books/${bookId}`)
+              .catch((err) => {
+                if (err.response?.status === 404) {
+                  return { data: null };
+                }
+                throw err;
+              })
         ]);
 
         setBook(bookResponse.data);
@@ -177,23 +171,24 @@ const BookView = () => {
                 </h3>
               </div>
               <div className="flex flex-col items-center">
-                <p className="text-sm text-slate-500 text-center">
-                  Bu kitap şu anda sizde bulunuyor. Kitabı iade etmek veya diğer ödünç aldığınız kitapları görüntülemek için aşağıya tıklayınız.
+                <p className="text-center text-sm text-slate-500">
+                  Bu kitap şu anda sizde bulunuyor. Kitabı iade etmek veya diğer
+                  ödünç aldığınız kitapları görüntülemek için aşağıya
+                  tıklayınız.
                 </p>
-                <div className='flex w-full gap-2 justify-center'>
+                <div className="flex w-full justify-center gap-2">
                   <Button
                     onClick={() => navigate('/mybooks')}
-                  className="mb-2 mt-4 rounded-sm p-2 text-sm font-semibold border border-sky-700 hover:bg-sky-700 hover:text-white transition text-sky-800"
+                    className="mb-2 mt-4 rounded-sm border border-sky-700 p-2 text-sm font-semibold text-sky-800 transition hover:bg-sky-700 hover:text-white"
                   >
                     Tüm Kitapları Görüntüle
                   </Button>
                   <Button
-                    className="mb-2 mt-4 rounded-sm bg-sky-700 px-2 py-2 text-sm font-semibold transition text-white hover:bg-sky-900"
+                    className="mb-2 mt-4 rounded-sm bg-sky-700 px-2 py-2 text-sm font-semibold text-white transition hover:bg-sky-900"
                     onClick={() => navigate(`/mybooks/${borrowedBook?.id}`)}
                   >
                     Kitaba Git
                   </Button>
-
                 </div>
               </div>
             </div>
@@ -292,6 +287,11 @@ const BookView = () => {
         </div>
       </div>
     );
+  }
+
+  if (error) {
+    return;
+    <div>{error}</div>;
   }
 
   return (

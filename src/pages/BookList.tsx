@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Link,
   useNavigate,
   useParams,
   useSearchParams
 } from 'react-router-dom';
-import axios from 'axios';
 import { Button } from '@headlessui/react';
 import Book from '../components/Book/Book';
 import TBook from '../types/Book';
@@ -13,11 +12,8 @@ import TGenre from '../types/Genre';
 import BookSkeleton from '../components/BookSkeleton';
 import PaginationHeader from '../types/PaginationHeader';
 import Pagination from '../components/Pagination';
+import api from '../api';
 
-const api = axios.create({
-  baseURL: `http://localhost:5109/api/v1/`,
-  headers: { 'Content-Type': 'application/json' }
-});
 
 const BookList = () => {
   const [books, setBooks] = useState<TBook[] | null>(null);

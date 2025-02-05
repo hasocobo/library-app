@@ -6,7 +6,7 @@ import { useUser } from '../../context/UserProvider';
 export default function Avatar() {
   const [expanded, setExpanded] = useState(false);
   const { user } = useUser();
-  const popoverRef = useRef(null);
+  const popoverRef = useRef<HTMLDivElement | null>(null);
   const role: string = user?.roles.includes('Admin') ? 'Admin'
     : user?.roles.includes('Librarian') ? 'Kütüphane Görevlisi'
     : 'User';
@@ -21,8 +21,8 @@ export default function Avatar() {
     };
   }, [expanded]);
 
-  const handleClickOutside = (event) => {
-    if (popoverRef.current && !popoverRef.current.contains(event.target)) {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
       setExpanded(false);
     }
   };

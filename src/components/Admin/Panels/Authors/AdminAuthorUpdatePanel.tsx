@@ -1,8 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState, useEffect } from 'react';
-import axios from 'axios';
 import { AlertCircle } from 'lucide-react';
 import TAuthor from '../../../../types/Author';
+import api from '../../../../api';
 
 type AdminAuthorUpdateDto = {
   firstName: string;
@@ -14,10 +14,6 @@ type AdminAuthorUpdateDto = {
 type ValidationErrors = {
   [key in keyof AdminAuthorUpdateDto]?: string;
 };
-
-const api = axios.create({
-  baseURL: 'http://localhost:5109/api/v1'
-});
 
 type AdminAuthorUpdatePanelProps = {
   isOpen: boolean;

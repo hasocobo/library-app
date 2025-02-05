@@ -7,9 +7,9 @@ import {
   Transition,
   TransitionChild
 } from '@headlessui/react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserProvider';
+import api from '../../api';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -35,7 +35,7 @@ const Login = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5109/api/v1/login', {
+      const response = await api.post('login', {
         username,
         password
       });

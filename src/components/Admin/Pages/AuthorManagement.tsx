@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import {
-  Search,
-  Plus,
-  MoreVertical,
   ChevronLeft,
   ChevronRight,
   HomeIcon
@@ -17,10 +13,7 @@ import DropdownMenu from '../Panels/DropdownMenu';
 import AdminAuthorUpdatePanel from '../Panels/Authors/AdminAuthorUpdatePanel';
 import DeleteConfirmationModal from '../Panels/DeleteConfirmationModal';
 import RequestResult from '../../../types/RequestResult';
-
-const api = axios.create({
-  baseURL: 'http://localhost:5109/api/v1'
-});
+import api from '../../../api';
 
 const AuthorManagement = () => {
   const [isOpen, setIsOpen] = useState(false);

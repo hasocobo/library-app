@@ -1,5 +1,3 @@
-import React from 'react';
-
 type User = {
   firstName?: string,
   lastName?: string,

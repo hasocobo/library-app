@@ -1,19 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '@headlessui/react';
 import TBorrowedBook from '../../types/BorrowedBook';
 import { useUser } from '../../context/UserProvider';
 import bookImage from '../../assets/cover.png';
 import BorrowingStatus from '../../types/BorrowingStatus';
-
-const api = axios.create({
-  baseURL: `http://localhost:5109/api/v1/`,
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-    'Content-Type': 'application/json'
-  }
-});
+import api from '../../api';
 
 const BorrowedBookView = () => {
   const [book, setBook] = useState<TBorrowedBook | null>(null);
@@ -129,6 +122,11 @@ const BorrowedBookView = () => {
         );
     }
   };
+
+  if (error) {
+    return;
+    <div>{error}</div>;
+  }
 
   if (loading) {
     return (
@@ -264,5 +262,8 @@ const BorrowedBookView = () => {
     </div>
   );
 };
+
+
+
 
 export default BorrowedBookView;

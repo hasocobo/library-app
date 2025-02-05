@@ -5,6 +5,7 @@ import TUser from '../../../../types/User';
 import TBook from '../../../../types/Book';
 import RequestResult from '../../../../types/RequestResult';
 import { AlertCircle } from 'lucide-react';
+import api from '../../../../api';
 
 type BorrowedBookCreationDto = {
   userId: string;
@@ -16,9 +17,7 @@ type ValidationErrors = {
   [key in keyof BorrowedBookCreationDto]?: string;
 };
 
-const api = axios.create({
-  baseURL: 'http://localhost:5109/api/v1'
-});
+
 
 const defaultDueDate = new Date();
 defaultDueDate.setDate(defaultDueDate.getDate() + 14); // default due date is 2 weeks from today

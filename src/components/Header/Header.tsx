@@ -29,7 +29,7 @@ export default function Header({ onMenuClick }) {
 
   const [genres, setGenres] = useState<TGenre[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [isFocused, setIsFocused] = useState(false);
   const navigate = useNavigate();
   const searchInputRef = useRef<HTMLInputElement>(null);

@@ -20,6 +20,7 @@ import GenreManagement from './components/Admin/Pages/GenreManagement.tsx';
 import AuthorManagement from './components/Admin/Pages/AuthorManagement.tsx';
 import LibrarianDashboard from './components/Layouts/LibrarianDashboard.tsx';
 
+
 const router = createBrowserRouter([
   {
     path: '',
@@ -58,13 +59,6 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <Signup />
-    /*element: <PrivateRoute allowedRoles={['ADMIN']} />,
-    children: [
-      {
-        path: 'b',
-        element: <Signup />
-      }
-    ]*/
   },
   {
     path: '/unauthorized',

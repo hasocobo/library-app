@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { ChevronLeft, ChevronRight, HomeIcon } from 'lucide-react';
 import TBook from '../../../types/Book';
 import { Button } from '@headlessui/react';
@@ -10,10 +9,7 @@ import DropdownMenu from '../Panels/DropdownMenu';
 import AdminBookUpdatePanel from '../Panels/Books/AdminBookUpdatePanel';
 import DeleteConfirmationModal from '../Panels/DeleteConfirmationModal';
 import RequestResult from '../../../types/RequestResult';
-
-const api = axios.create({
-  baseURL: 'http://localhost:5109/api/v1'
-});
+import api from '../../../api';
 
 const BookManagement = () => {
   const [isOpen, setIsOpen] = useState(false);

@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import {
   ChevronLeft,
   ChevronRight,
   HomeIcon,
-  MoreVertical
 } from 'lucide-react';
 import { Button } from '@headlessui/react';
 import TBorrowedBook from '../../../types/BorrowedBook';
@@ -15,10 +13,7 @@ import RequestResult from '../../../types/RequestResult';
 import AdminBorrowedBookCreationPanel from '../Panels/BorrowedBooks/AdminBorrowedBookCreationPanel';
 import AdminBorrowedBookUpdatePanel from '../Panels/BorrowedBooks/AdminBorrowedBookUpdatePanel';
 import DeleteConfirmationModal from '../Panels/DeleteConfirmationModal';
-
-const api = axios.create({
-  baseURL: 'http://localhost:5109/api/v1'
-});
+import api from '../../../api';
 
 const BorrowedBookManagement = () => {
   const [loading, setLoading] = useState<boolean>(true);

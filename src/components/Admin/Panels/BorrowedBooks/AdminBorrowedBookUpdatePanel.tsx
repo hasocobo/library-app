@@ -5,6 +5,7 @@ import TBorrowedBook from '../../../../types/BorrowedBook';
 import RequestResult from '../../../../types/RequestResult';
 import { AlertCircle } from 'lucide-react';
 import { CheckIcon } from '@heroicons/react/24/solid';
+import api from '../../../../api';
 
 type BorrowedBookUpdateDto = {
   dueDate: string;
@@ -16,9 +17,7 @@ type ValidationErrors = {
   [key in keyof BorrowedBookUpdateDto]?: string;
 };
 
-const api = axios.create({
-  baseURL: 'http://localhost:5109/api/v1'
-});
+
 
 const AdminBorrowedBookUpdatePanel = ({
   isOpen,

@@ -14,16 +14,19 @@ export default function SidebarMenu({ isOpen, handleClick }) {
 
   useEffect(() => {
     if (!isOpen) {
-      // Add a delay before setting isClosing to true
       const timeoutId = setTimeout(() => {
         setIsClosed(true);
-      }, 250); 
-
-      return () => clearTimeout(timeoutId);
-    } else {
-      setIsClosed(false);
-    }
+      }, 250);
+  
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    } 
+  
+    setIsClosed(false);
+    return undefined; 
   }, [isOpen]);
+  
 
   return (
     <dialog

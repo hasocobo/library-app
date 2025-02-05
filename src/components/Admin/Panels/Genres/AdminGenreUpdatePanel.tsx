@@ -1,8 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState, useEffect } from 'react';
-import axios from 'axios';
 import { AlertCircle } from 'lucide-react';
 import TGenre from '../../../../types/Genre';
+import api from '../../../../api';
 
 const emptyGuid = "00000000-0000-0000-0000-000000000000"
 
@@ -15,10 +15,6 @@ type AdminGenreUpdateDto = {
 type ValidationErrors = {
   [key in keyof AdminGenreUpdateDto]?: string;
 };
-
-const api = axios.create({
-  baseURL: 'http://localhost:5109/api/v1'
-});
 
 type AdminGenreUpdatePanelProps = {
   isOpen: boolean;

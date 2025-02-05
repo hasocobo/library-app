@@ -1,7 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState } from 'react';
-import axios from 'axios';
 import { AlertCircle } from 'lucide-react';
+import api from '../../../../api';
 
 type AdminUserCreationDto = {
   firstName: string;
@@ -17,10 +17,6 @@ type AdminUserCreationDto = {
 type ValidationErrors = {
   [key in keyof AdminUserCreationDto]?: string;
 };
-
-const api = axios.create({
-  baseURL: 'http://localhost:5109/api/v1'
-});
 
 type AdminUserCreationPanelProps = {
   isOpen: boolean;

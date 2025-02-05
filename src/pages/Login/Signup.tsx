@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Dialog,
@@ -7,10 +7,9 @@ import {
   Transition,
   TransitionChild
 } from '@headlessui/react';
-import axios from 'axios';
 import './LoginSignup.css';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../../context/UserProvider';
+import api from '../../api';
 
 type SignupForm = {
   username: string,
@@ -20,11 +19,6 @@ type SignupForm = {
   email: string,
   role?: string
 }
-
-const api = axios.create({
-  baseURL: `http://localhost:5109/api/v1/`,
-  headers: { "Content-Type": "application/json" }
-});
 
 export default function Signup() {
   const [signupData, setSignupData] = useState<SignupForm>({
@@ -37,14 +31,6 @@ export default function Signup() {
 
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isFailureOpen, setIsFailureOpen] = useState(false);
-
-  function open() {
-    setIsSuccessOpen(true);
-  }
-
-  function close() {
-    setIsFailureOpen(false);
-  }
 
   const navigate = useNavigate();
 

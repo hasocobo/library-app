@@ -1,8 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState, useEffect } from 'react';
-import axios from 'axios';
 import TBook from '../../../../types/Book';
 import TGenre from '../../../../types/Genre';
+import api from '../../../../api';
 
 type AdminBookUpdatePanelProps = {
   isOpen: boolean;
@@ -10,9 +10,7 @@ type AdminBookUpdatePanelProps = {
   bookToUpdate: TBook | null;
 };
 
-const api = axios.create({
-  baseURL: 'http://localhost:5109/api/v1'
-});
+
 
 const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpdatePanelProps) => {
   // Local state for updateable fields.
