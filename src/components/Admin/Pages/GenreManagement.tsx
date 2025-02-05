@@ -8,33 +8,32 @@ import {
   ChevronRight,
   HomeIcon
 } from 'lucide-react';
-import TAuthor from '../../types/Author';
+import TGenre from '../../../types/Genre';
 import { Button } from '@headlessui/react';
-import TableSkeleton from '../TableSkeleton';
+import TableSkeleton from '../../TableSkeleton';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AdminAuthorCreationPanel from './Panels/Authors/AdminAuthorCreationPanel';
-import DropdownMenu from './Panels/DropdownMenu';
-import AdminAuthorUpdatePanel from './Panels/Authors/AdminAuthorUpdatePanel';
-import DeleteConfirmationModal from './Panels/DeleteConfirmationModal';
-import RequestResult from '../../types/RequestResult';
+import AdminGenreCreationPanel from '../Panels/Genres/AdminGenreCreationPanel';
+import DropdownMenu from '../Panels/DropdownMenu';
+import AdminGenreUpdatePanel from '../Panels/Genres/AdminGenreUpdatePanel';
+import DeleteConfirmationModal from '../Panels/DeleteConfirmationModal';
+import RequestResult from '../../../types/RequestResult';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
 });
 
-const AdminAuthorsDetails = () => {
+const GenreManagement = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [selectedAuthor, setSelectedAuthor] = useState<TAuthor | null>(null);
+  const [selectedGenre, setSelectedGenre] = useState<TGenre | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [authors, setAuthors] = useState<TAuthor[]>([]);
+  const [genres, setGenres] = useState<TGenre[]>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
-  const [requestResult, setRequestResult] = useState<RequestResult>(RequestResult.Default)
-
+  const [requestResult, setRequestResult] = useState<RequestResult>(RequestResult.Default);
 
   const pageSize = 8;
   const navigate = useNavigate();
@@ -42,9 +41,9 @@ const AdminAuthorsDetails = () => {
   const paths = location.pathname.slice(1).split('/');
 
   useEffect(() => {
-    const fetchAuthors = async () => {
+    const fetchGenres = async () => {
       try {
-        const response = await api.get('/authors', {
+        const response = await api.get('/genres', {
           params: {
             SearchTerm: search,
             PageNumber: page,
@@ -52,7 +51,7 @@ const AdminAuthorsDetails = () => {
           }
         });
 
-        setAuthors(response.data);
+        setGenres(response.data);
         setLoading(false);
         const paginationHeader = response.headers['libraryapi-pagination'];
         if (paginationHeader) {
@@ -60,56 +59,54 @@ const AdminAuthorsDetails = () => {
           setTotalPages(parsedHeader.TotalPages);
         }
       } catch (error) {
-        console.error('Error fetching authors:', error);
+        console.error('Error fetching genres:', error);
       }
     };
 
-    fetchAuthors();
+    fetchGenres();
   }, [search, page]);
 
-  const handleEdit = (author: TAuthor) => {
-    setSelectedAuthor(author);
+  const handleEdit = (genre: TGenre) => {
+    setSelectedGenre(genre);
     setIsEditOpen(true);
   };
 
-  
-  const showDelete = (author: TAuthor) => {
-    setSelectedAuthor(author);
+  const showDelete = (genre: TGenre) => {
+    setSelectedGenre(genre);
     setIsDeleteOpen(true);
+    setRequestResult(RequestResult.Default);
   };
 
   const handleDelete = async () => {
     try {
-      const response = await api.delete(
-        `authors/${selectedAuthor?.id}`
-      );
+      const response = await api.delete(`genres/${selectedGenre?.id}`);
       if (response.status === 204) setIsDeleteOpen(false);
       window.location.reload();
     } catch (error) {
       setRequestResult(RequestResult.Failed);
       console.error(error);
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-7xl p-6">
-      <AdminAuthorCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
+      <AdminGenreCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
 
-      <AdminAuthorUpdatePanel
+      <AdminGenreUpdatePanel
         isOpen={isEditOpen}
         setIsOpen={setIsEditOpen}
-        author={selectedAuthor}
+        genre={selectedGenre}
       />
 
       <DeleteConfirmationModal
         isOpen={isDeleteOpen}
         onConfirm={handleDelete}
         onClose={() => setIsDeleteOpen(false)}
-        requestResult={requestResult}
         setRequestResult={setRequestResult}
-        entityType='yazarı'
-        entityName={`${selectedAuthor?.firstName} ${selectedAuthor?.lastName}`}
-        warningMessage='Dikkat, bu yazarı silmek onun tüm kitaplarını beraberinde silecektir. Yazarı silmeden önce kitabın ödünç alınmadığından emin olun.'
+        requestResult={requestResult}
+        entityType='türü'
+        entityName={selectedGenre?.name}
+        warningMessage='Dikkat, bu türe ait bir alt tür veya kitap varsa silemezsiniz.'
       />
 
       <div className="flex items-center justify-between">
@@ -135,19 +132,19 @@ const AdminAuthorsDetails = () => {
             className="flex items-center gap-1 rounded-md bg-sky-800 p-2"
           >
             <i className="material-symbols-outlined text-white">add</i>
-            <span className="font-semibold text-white">Yazar Ekle</span>
+            <span className="font-semibold text-white">Kitap Türü Ekle</span>
           </Button>
         </div>
       </div>
 
       <div className="mb-2 mt-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-gray-800">Tüm Yazarlar</h2>
+        <h2 className="text-lg font-bold text-gray-800">Tüm Kitap Türleri</h2>
       </div>
 
       <div className="relative mb-4">
         <input
           type="text"
-          placeholder="Yazar ara..."
+          placeholder="Kitap Türü ara..."
           value={search}
           onChange={(e) => {
             setPage(1);
@@ -168,34 +165,32 @@ const AdminAuthorsDetails = () => {
             <thead className="bg-gray-100">
               <tr className="text-gray-700">
                 <th className="border p-3">İsim</th>
-                <th className="border p-3">Doğum Tarihi</th>
-                <th className="border p-3">Ölüm Tarihi</th>
+                <th className="border p-3">Slug</th>
+                <th className="border p-3">Üst Tür</th>
                 <th className="border p-3 text-center">İşlemler</th>
               </tr>
             </thead>
             <tbody>
-              {authors && authors.length > 0 ? (
-                authors.map((author: TAuthor) => (
-                  <tr key={author.id} className="hover:bg-gray-50">
-                    <td className="border p-3 font-medium">
-                      {author.firstName + ' ' + author.lastName}
+              {genres && genres.length > 0 ? (
+                genres.map((genre: TGenre) => (
+                  <tr key={genre.id} className="hover:bg-gray-50">
+                    <td className="border p-3 font-medium">{genre.name}</td>
+                    <td className="border p-3">{genre.slug}</td>
+                    <td className="border p-3">
+                      {genre.parentGenreName || 'Yok(Ana Tür)'}
                     </td>
-                    <td className="border p-3">{author.dateOfBirth}</td>
-                    <td className="border p-3">{author.dateOfDeath || '-'}</td>
                     <td className="relative border p-3 text-center">
                       <DropdownMenu
-                        isOpen={openDropdownId === author.id}
+                        isOpen={openDropdownId === genre.id}
                         onToggle={() =>
                           setOpenDropdownId(
-                            openDropdownId === author.id ? null : author.id
+                            openDropdownId === genre.id ? null : genre.id
                           )
                         }
-                        onEdit={() => handleEdit(author)}
-                        onDelete={() => showDelete(author)}
+                        onEdit={() => handleEdit(genre)}
+                        onDelete={() => showDelete(genre)}
                         onView={() => {
-                          navigate(
-                            `/browse?q=${author.firstName + ' ' + author.lastName}`
-                          );
+                          navigate(`/genre/${genre.slug}`);
                         }}
                       />
                     </td>
@@ -203,8 +198,8 @@ const AdminAuthorsDetails = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="p-4 text-center text-gray-500">
-                    Yazar bulunamadı.
+                  <td colSpan={4} className="p-4 text-center text-gray-500">
+                    Tür bulunamadı.
                   </td>
                 </tr>
               )}
@@ -246,4 +241,4 @@ const AdminAuthorsDetails = () => {
   );
 };
 
-export default AdminAuthorsDetails;
+export default GenreManagement;

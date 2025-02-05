@@ -1,8 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
 import UserIcon from '../Header/UserIcon';
 import { useUser } from '../../context/UserProvider';
+import SidebarRoute from '../../types/SidebarRoute';
 
-const AdminSidebar = () => {
+const ManagementSidebar = ({ sidebarRoutes }: { sidebarRoutes: SidebarRoute[]}) => {
   const location = useLocation();
   const { user } = useUser();
 
@@ -18,20 +19,10 @@ const AdminSidebar = () => {
         <h3 className="mt-4 text-lg font-semibold text-gray-900">
           {user.firstName + ' ' + user.lastName}
         </h3>
-        <p className="mt-1 text-sm text-gray-500">Admin</p>
+        <p className="mt-1 text-sm text-gray-500">{user.roles.includes('Admin') ? 'Admin' : 'Kütüphane Görevlisi'}</p>
       </div>
       <nav className="flex grow flex-col pt-6">
-        {[
-          { to: '/admin/books', icon: 'library_books', label: 'Kitaplar' },
-          { to: '/admin/genres', icon: 'category', label: 'Kitap Türleri' },
-          { to: '/admin/users', icon: 'group', label: 'Kullanıcılar' },
-          {
-            to: '/admin/borrowedbooks',
-            icon: 'menu_book',
-            label: 'Ödünç Kitaplar'
-          },
-          { to: '/admin/authors', icon: 'person_edit', label: 'Yazarlar' }
-        ].map(({ to, icon, label }) => (
+        {sidebarRoutes.map(({ to, icon, label }) => (
           <Link
             key={to}
             to={to}
@@ -66,4 +57,4 @@ const AdminSidebar = () => {
   );
 };
 
-export default AdminSidebar;
+export default ManagementSidebar;

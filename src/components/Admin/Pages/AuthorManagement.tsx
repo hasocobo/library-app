@@ -1,35 +1,40 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ChevronLeft, ChevronRight, HomeIcon } from 'lucide-react';
-import TBook from '../../types/Book';
+import {
+  Search,
+  Plus,
+  MoreVertical,
+  ChevronLeft,
+  ChevronRight,
+  HomeIcon
+} from 'lucide-react';
+import TAuthor from '../../../types/Author';
 import { Button } from '@headlessui/react';
-import TableSkeleton from '../TableSkeleton';
+import TableSkeleton from '../../TableSkeleton';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AdminBookCreationPanel from './Panels/AdminBookCreationPanel';
-import DropdownMenu from './Panels/DropdownMenu';
-import AdminBookUpdatePanel from './Panels/AdminBookUpdatePanel';
-import DeleteConfirmationModal from './Panels/DeleteConfirmationModal';
-import RequestResult from '../../types/RequestResult';
+import AdminAuthorCreationPanel from '../Panels/Authors/AdminAuthorCreationPanel';
+import DropdownMenu from '../Panels/DropdownMenu';
+import AdminAuthorUpdatePanel from '../Panels/Authors/AdminAuthorUpdatePanel';
+import DeleteConfirmationModal from '../Panels/DeleteConfirmationModal';
+import RequestResult from '../../../types/RequestResult';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
 });
 
-const AdminBooks = () => {
+const AuthorManagement = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<TBook | null>(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [selectedAuthor, setSelectedAuthor] = useState<TAuthor | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [books, setBooks] = useState<TBook[]>([]);
+  const [authors, setAuthors] = useState<TAuthor[]>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
-  const [requestResult, setRequestResult] = useState<RequestResult>(
-    RequestResult.Default
-  );
+  const [requestResult, setRequestResult] = useState<RequestResult>(RequestResult.Default)
+
 
   const pageSize = 7;
   const navigate = useNavigate();
@@ -37,9 +42,9 @@ const AdminBooks = () => {
   const paths = location.pathname.slice(1).split('/');
 
   useEffect(() => {
-    const fetchBooks = async () => {
+    const fetchAuthors = async () => {
       try {
-        const response = await api.get('/books', {
+        const response = await api.get('/authors', {
           params: {
             SearchTerm: search,
             PageNumber: page,
@@ -47,62 +52,64 @@ const AdminBooks = () => {
           }
         });
 
-        setBooks(response.data);
+        setAuthors(response.data);
         setLoading(false);
         const paginationHeader = response.headers['libraryapi-pagination'];
         if (paginationHeader) {
           const parsedHeader = JSON.parse(paginationHeader);
           setTotalPages(parsedHeader.TotalPages);
-          setTotalCount(parsedHeader.TotalCount);
         }
       } catch (error) {
-        console.error('Kitaplar alınırken hata oluştu:', error);
+        console.error('Error fetching authors:', error);
       }
     };
 
-    fetchBooks();
+    fetchAuthors();
   }, [search, page]);
 
-  const handleEdit = (book: TBook) => {
-    setSelectedBook(book);
+  const handleEdit = (author: TAuthor) => {
+    setSelectedAuthor(author);
     setIsEditOpen(true);
   };
 
-  const showDelete = (book: TBook) => {
-    setSelectedBook(book);
+  
+  const showDelete = (author: TAuthor) => {
+    setSelectedAuthor(author);
     setIsDeleteOpen(true);
   };
 
   const handleDelete = async () => {
     try {
-      const response = await api.delete(`books/${selectedBook?.bookId}`);
+      const response = await api.delete(
+        `authors/${selectedAuthor?.id}`
+      );
       if (response.status === 204) setIsDeleteOpen(false);
       window.location.reload();
     } catch (error) {
       setRequestResult(RequestResult.Failed);
       console.error(error);
     }
-  };
+  }
 
   return (
     <div className="mx-auto max-w-7xl p-6">
-      {/* Creation panel for adding new books */}
-      <AdminBookCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
+      <AdminAuthorCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
 
-      <AdminBookUpdatePanel
+      <AdminAuthorUpdatePanel
         isOpen={isEditOpen}
         setIsOpen={setIsEditOpen}
-        bookToUpdate={selectedBook}
+        author={selectedAuthor}
       />
 
       <DeleteConfirmationModal
-        onConfirm={handleDelete}
         isOpen={isDeleteOpen}
+        onConfirm={handleDelete}
         onClose={() => setIsDeleteOpen(false)}
-        entityName={selectedBook?.title}
-        entityType="kitabı"
         requestResult={requestResult}
         setRequestResult={setRequestResult}
+        entityType='yazarı'
+        entityName={`${selectedAuthor?.firstName} ${selectedAuthor?.lastName}`}
+        warningMessage='Dikkat, bu yazarı silmek onun tüm kitaplarını beraberinde silecektir. Yazarı silmeden önce kitabın ödünç alınmadığından emin olun.'
       />
 
       <div className="flex items-center justify-between">
@@ -128,20 +135,19 @@ const AdminBooks = () => {
             className="flex items-center gap-1 rounded-md bg-sky-800 p-2"
           >
             <i className="material-symbols-outlined text-white">add</i>
-            <span className="font-semibold text-white">Kitap Ekle</span>
+            <span className="font-semibold text-white">Yazar Ekle</span>
           </Button>
         </div>
       </div>
 
       <div className="mb-2 mt-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-gray-800">Tüm Kitaplar</h2>
-        <p className='text-gray-500'>Toplam {totalCount} kitap</p>
+        <h2 className="text-lg font-bold text-gray-800">Tüm Yazarlar</h2>
       </div>
 
       <div className="relative mb-4">
         <input
           type="text"
-          placeholder="Kitap ara..."
+          placeholder="Yazar ara..."
           value={search}
           onChange={(e) => {
             setPage(1);
@@ -161,39 +167,35 @@ const AdminBooks = () => {
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-gray-100">
               <tr className="text-gray-700">
-                <th className="border p-3">Başlık</th>
-                <th className="border p-3">Yazar</th>
-                <th className="border p-3">Yıl</th>
-                <th className="border p-3">Sayfa Sayısı</th>
-                <th className="border p-3">Tür</th>
-                <th className="border p-3">Kitap ID</th>
-                <th className="border p-3">Adet</th>
+                <th className="border p-3">İsim</th>
+                <th className="border p-3">Doğum Tarihi</th>
+                <th className="border p-3">Ölüm Tarihi</th>
                 <th className="border p-3 text-center">İşlemler</th>
               </tr>
             </thead>
             <tbody>
-              {books && books.length > 0 ? (
-                books.map((book: TBook) => (
-                  <tr key={book.bookId} className="hover:bg-gray-50">
-                    <td className="border p-3 font-medium">{book.title}</td>
-                    <td className="border p-3">{book.authorName}</td>
-                    <td className="border p-3">{book.publishYear}</td>
-                    <td className="border p-3">{book.pageCount}</td>
-                    <td className="border p-3">{book.genreName}</td>
-                    <td className="border p-3">{book.bookId}</td>
-                    <td className="border p-3 text-center">{book.quantity}</td>
+              {authors && authors.length > 0 ? (
+                authors.map((author: TAuthor) => (
+                  <tr key={author.id} className="hover:bg-gray-50">
+                    <td className="border p-3 font-medium">
+                      {author.firstName + ' ' + author.lastName}
+                    </td>
+                    <td className="border p-3">{author.dateOfBirth ? new Date(author.dateOfBirth).toLocaleDateString() : '-'}</td>
+                    <td className="border p-3">{author.dateOfDeath ? new Date(author.dateOfDeath).toLocaleDateString() : '-'}</td>
                     <td className="relative border p-3 text-center">
                       <DropdownMenu
-                        isOpen={openDropdownId === book.bookId}
+                        isOpen={openDropdownId === author.id}
                         onToggle={() =>
                           setOpenDropdownId(
-                            openDropdownId === book.bookId ? null : book.bookId
+                            openDropdownId === author.id ? null : author.id
                           )
                         }
-                        onEdit={() => handleEdit(book)}
-                        onDelete={() => showDelete(book)}
+                        onEdit={() => handleEdit(author)}
+                        onDelete={() => showDelete(author)}
                         onView={() => {
-                          navigate(`/browse/${book.bookId}`);
+                          navigate(
+                            `/browse?q=${author.firstName + ' ' + author.lastName}`
+                          );
                         }}
                       />
                     </td>
@@ -201,8 +203,8 @@ const AdminBooks = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={8} className="p-4 text-center text-gray-500">
-                    Kitap bulunamadı.
+                  <td colSpan={5} className="p-4 text-center text-gray-500">
+                    Yazar bulunamadı.
                   </td>
                 </tr>
               )}
@@ -244,4 +246,4 @@ const AdminBooks = () => {
   );
 };
 
-export default AdminBooks;
+export default AuthorManagement;

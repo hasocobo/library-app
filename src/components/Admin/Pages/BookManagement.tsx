@@ -1,42 +1,35 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import TUser from '../../types/User';
-import {
-  Search,
-  Plus,
-  MoreVertical,
-  ChevronLeft,
-  ChevronRight,
-  HomeIcon
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, HomeIcon } from 'lucide-react';
+import TBook from '../../../types/Book';
 import { Button } from '@headlessui/react';
-import TableSkeleton from '../TableSkeleton';
+import TableSkeleton from '../../TableSkeleton';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-// Import your modal components and request status
-import AdminUserCreationPanel from './Panels/Users/AdminUserCreationPanel';
-import AdminUserUpdatePanel from './Panels/Users/AdminUserUpdatePanel';
-import DeleteConfirmationModal from './Panels/DeleteConfirmationModal';
-import DropdownMenu from './Panels/DropdownMenu';
-import RequestResult from '../../types/RequestResult';
+import AdminBookCreationPanel from '../Panels/Books/AdminBookCreationPanel';
+import DropdownMenu from '../Panels/DropdownMenu';
+import AdminBookUpdatePanel from '../Panels/Books/AdminBookUpdatePanel';
+import DeleteConfirmationModal from '../Panels/DeleteConfirmationModal';
+import RequestResult from '../../../types/RequestResult';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
 });
 
-const AdminUserManagement = () => {
+const BookManagement = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState<TBook | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [users, setUsers] = useState<TUser[]>([]);
+  const [books, setBooks] = useState<TBook[]>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
-  const [requestResult, setRequestResult] = useState<RequestResult>(RequestResult.Default);
-
-  const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
-  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<TUser | null>(null);
+  const [requestResult, setRequestResult] = useState<RequestResult>(
+    RequestResult.Default
+  );
 
   const pageSize = 7;
   const navigate = useNavigate();
@@ -44,77 +37,74 @@ const AdminUserManagement = () => {
   const paths = location.pathname.slice(1).split('/');
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchBooks = async () => {
       try {
-        const response = await api.get('/users', {
+        const response = await api.get('/books', {
           params: {
             SearchTerm: search,
             PageNumber: page,
             PageSize: pageSize
           }
         });
-        setUsers(response.data);
-        setLoading(false);
 
-        // If your API sends pagination info in a header, parse it here.
+        setBooks(response.data);
+        setLoading(false);
         const paginationHeader = response.headers['libraryapi-pagination'];
         if (paginationHeader) {
           const parsedHeader = JSON.parse(paginationHeader);
           setTotalPages(parsedHeader.TotalPages);
+          setTotalCount(parsedHeader.TotalCount);
         }
       } catch (error) {
-        console.error('Kullanıcılar alınırken hata oluştu:', error);
+        console.error('Kitaplar alınırken hata oluştu:', error);
       }
     };
 
-    fetchUsers();
+    fetchBooks();
   }, [search, page]);
 
-  const handleEdit = (user: TUser) => {
-    setSelectedUser(user);
+  const handleEdit = (book: TBook) => {
+    setSelectedBook(book);
     setIsEditOpen(true);
   };
 
-  const showDelete = (user: TUser) => {
-    setSelectedUser(user);
+  const showDelete = (book: TBook) => {
+    setSelectedBook(book);
     setIsDeleteOpen(true);
-    setRequestResult(RequestResult.Default);
   };
 
   const handleDelete = async () => {
     try {
-      const response = await api.delete(`/users/${selectedUser?.id}`);
-      if (response.status === 204) {
-        setIsDeleteOpen(false);
-        window.location.reload();
-      }
+      const response = await api.delete(`books/${selectedBook?.bookId}`);
+      if (response.status === 204) setIsDeleteOpen(false);
+      window.location.reload();
     } catch (error) {
       setRequestResult(RequestResult.Failed);
-      console.error('Kullanıcı silinirken hata oluştu:', error);
+      console.error(error);
     }
   };
 
   return (
     <div className="mx-auto max-w-7xl p-6">
-      {/* Modals for creating, updating, and deleting a user */}
-      <AdminUserCreationPanel isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} />
-      <AdminUserUpdatePanel
+      {/* Creation panel for adding new books */}
+      <AdminBookCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
+
+      <AdminBookUpdatePanel
         isOpen={isEditOpen}
         setIsOpen={setIsEditOpen}
-        user={selectedUser}
-      />
-      <DeleteConfirmationModal
-        isOpen={isDeleteOpen}
-        onConfirm={handleDelete}
-        onClose={() => setIsDeleteOpen(false)}
-        setRequestResult={setRequestResult}
-        requestResult={requestResult}
-        entityType="kullanıcıyı"
-        entityName={`${selectedUser?.firstName} ${selectedUser?.lastName}`}
-        warningMessage="Dikkat, bu kullanıcıyı silmek geri alınamaz. Silmeden önce tüm bilgileri kontrol ettiğinizden emin olun."
+        bookToUpdate={selectedBook}
       />
 
-      {/* Breadcrumbs and Create Button */}
+      <DeleteConfirmationModal
+        onConfirm={handleDelete}
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        entityName={selectedBook?.title}
+        entityType="kitabı"
+        requestResult={requestResult}
+        setRequestResult={setRequestResult}
+      />
+
       <div className="flex items-center justify-between">
         <nav className="flex items-center gap-2">
           <HomeIcon
@@ -126,7 +116,7 @@ const AdminUserManagement = () => {
             <span
               key={i}
               className="font-semibold text-slate-600 opacity-75 hover:cursor-pointer hover:opacity-95"
-              onClick={() => navigate(i === 0 ? '/admin' : `/admin/${path}`)}
+              onClick={() => navigate(i === 0 ? `/${paths[0]}` : `/${paths[0]}/${path}`)}
             >
               {'>'} {path.charAt(0).toUpperCase() + path.slice(1)}
             </span>
@@ -134,24 +124,24 @@ const AdminUserManagement = () => {
         </nav>
         <div>
           <Button
-            onClick={() => setIsCreateOpen(true)}
+            onClick={() => setIsOpen(true)}
             className="flex items-center gap-1 rounded-md bg-sky-800 p-2"
           >
             <i className="material-symbols-outlined text-white">add</i>
-            <span className="font-semibold text-white">Kullanıcı Ekle</span>
+            <span className="font-semibold text-white">Kitap Ekle</span>
           </Button>
         </div>
       </div>
 
       <div className="mb-2 mt-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-gray-800">Tüm Kullanıcılar</h2>
+        <h2 className="text-lg font-bold text-gray-800">Tüm Kitaplar</h2>
+        <p className='text-gray-500'>Toplam {totalCount} kitap</p>
       </div>
 
-      {/* Search Input */}
       <div className="relative mb-4">
         <input
           type="text"
-          placeholder="Kullanıcı ara..."
+          placeholder="Kitap ara..."
           value={search}
           onChange={(e) => {
             setPage(1);
@@ -164,7 +154,6 @@ const AdminUserManagement = () => {
         </i>
       </div>
 
-      {/* Table */}
       {loading ? (
         <TableSkeleton />
       ) : (
@@ -172,46 +161,48 @@ const AdminUserManagement = () => {
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-gray-100">
               <tr className="text-gray-700">
-                <th className="border p-3">Ad</th>
-                <th className="border p-3">Soyad</th>
-                <th className="border p-3">Email</th>
-                <th className="border p-3">Kullanıcı Adı</th>
-                <th className="border p-3">Roller</th>
-                <th className="border p-3">ID</th>
+                <th className="border p-3">Başlık</th>
+                <th className="border p-3">Yazar</th>
+                <th className="border p-3">Yıl</th>
+                <th className="border p-3">Sayfa Sayısı</th>
+                <th className="border p-3">Tür</th>
+                <th className="border p-3">Kitap ID</th>
+                <th className="border p-3">Adet</th>
                 <th className="border p-3 text-center">İşlemler</th>
               </tr>
             </thead>
             <tbody>
-              {users && users.length > 0 ? (
-                users.map((user: TUser) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="border p-3 font-medium">{user.firstName}</td>
-                    <td className="border p-3">{user.lastName}</td>
-                    <td className="border p-3">{user.email}</td>
-                    <td className="border p-3">{user.username}</td>
-                    <td className="border p-3">
-                      {user.roles && user.roles.length > 0 ? user.roles.join(', ') : 'Yok'}
-                    </td>
-                    <td className="border p-3">{user.id}</td>
+              {books && books.length > 0 ? (
+                books.map((book: TBook) => (
+                  <tr key={book.bookId} className="hover:bg-gray-50">
+                    <td className="border p-3 font-medium">{book.title}</td>
+                    <td className="border p-3">{book.authorName}</td>
+                    <td className="border p-3">{book.publishYear}</td>
+                    <td className="border p-3">{book.pageCount}</td>
+                    <td className="border p-3">{book.genreName}</td>
+                    <td className="border p-3">{book.bookId}</td>
+                    <td className="border p-3 text-center">{book.quantity}</td>
                     <td className="relative border p-3 text-center">
                       <DropdownMenu
-                        isOpen={openDropdownId === user.id}
+                        isOpen={openDropdownId === book.bookId}
                         onToggle={() =>
-                          setOpenDropdownId(openDropdownId === user.id ? null : user.id)
+                          setOpenDropdownId(
+                            openDropdownId === book.bookId ? null : book.bookId
+                          )
                         }
-                        onEdit={() => handleEdit(user)}
-                        onDelete={() => showDelete(user)}
-                        onView={() =>
-                          navigate(`/browse?q=${encodeURIComponent(user.username)}`)
-                        }
+                        onEdit={() => handleEdit(book)}
+                        onDelete={() => showDelete(book)}
+                        onView={() => {
+                          navigate(`/browse/${book.bookId}`);
+                        }}
                       />
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="p-4 text-center text-gray-500">
-                    Kullanıcı bulunamadı.
+                  <td colSpan={8} className="p-4 text-center text-gray-500">
+                    Kitap bulunamadı.
                   </td>
                 </tr>
               )}
@@ -220,7 +211,6 @@ const AdminUserManagement = () => {
         </div>
       )}
 
-      {/* Pagination */}
       <div className="mt-4 flex items-center justify-between">
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
@@ -254,4 +244,4 @@ const AdminUserManagement = () => {
   );
 };
 
-export default AdminUserManagement;
+export default BookManagement;

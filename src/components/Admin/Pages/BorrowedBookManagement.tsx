@@ -7,20 +7,20 @@ import {
   MoreVertical
 } from 'lucide-react';
 import { Button } from '@headlessui/react';
-import TBorrowedBook from '../../types/BorrowedBook';
-import TableSkeleton from '../TableSkeleton';
+import TBorrowedBook from '../../../types/BorrowedBook';
+import TableSkeleton from '../../TableSkeleton';
 import { useNavigate, useLocation } from 'react-router-dom';
-import DropdownMenu from './Panels/DropdownMenu';
-import RequestResult from '../../types/RequestResult';
-import AdminBorrowedBookCreationPanel from './Panels/BorrowedBooks/AdminBorrowedBookCreationPanel';
-import AdminBorrowedBookUpdatePanel from './Panels/BorrowedBooks/AdminBorrowedBookUpdatePanel';
-import DeleteConfirmationModal from './Panels/DeleteConfirmationModal';
+import DropdownMenu from '../Panels/DropdownMenu';
+import RequestResult from '../../../types/RequestResult';
+import AdminBorrowedBookCreationPanel from '../Panels/BorrowedBooks/AdminBorrowedBookCreationPanel';
+import AdminBorrowedBookUpdatePanel from '../Panels/BorrowedBooks/AdminBorrowedBookUpdatePanel';
+import DeleteConfirmationModal from '../Panels/DeleteConfirmationModal';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
 });
 
-const AdminBorrowedBooks = () => {
+const BorrowedBookManagement = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [search, setSearch] = useState('');
@@ -257,4 +257,4 @@ const AdminBorrowedBooks = () => {
   );
 };
 
-export default AdminBorrowedBooks;
+export default BorrowedBookManagement;

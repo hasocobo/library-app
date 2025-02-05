@@ -1,8 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState, useEffect } from 'react';
 import axios from 'axios';
-import TBook from '../../../types/Book';
-import TGenre from '../../../types/Genre';
+import TBook from '../../../../types/Book';
+import TGenre from '../../../../types/Genre';
 
 type AdminBookUpdatePanelProps = {
   isOpen: boolean;
@@ -111,6 +111,7 @@ const AdminBookUpdatePanel = ({ isOpen, setIsOpen, bookToUpdate }: AdminBookUpda
         quantity: Number(book.quantity)
       });
       closeModal();
+      window.location.reload();
     } catch (error) {
       console.error('Error updating book:', error);
     }

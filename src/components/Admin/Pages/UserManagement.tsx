@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import TUser from '../../../types/User';
 import {
   Search,
   Plus,
@@ -8,107 +9,110 @@ import {
   ChevronRight,
   HomeIcon
 } from 'lucide-react';
-import TGenre from '../../types/Genre';
 import { Button } from '@headlessui/react';
-import TableSkeleton from '../TableSkeleton';
+import TableSkeleton from '../../TableSkeleton';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AdminGenreCreationPanel from './Panels/Genres/AdminGenreCreationPanel';
-import DropdownMenu from './Panels/DropdownMenu';
-import AdminGenreUpdatePanel from './Panels/Genres/AdminGenreUpdatePanel';
-import DeleteConfirmationModal from './Panels/DeleteConfirmationModal';
-import RequestResult from '../../types/RequestResult';
+
+import AdminUserCreationPanel from '../Panels/Users/AdminUserCreationPanel';
+import AdminUserUpdatePanel from '../Panels/Users/AdminUserUpdatePanel';
+import DeleteConfirmationModal from '../Panels/DeleteConfirmationModal';
+import DropdownMenu from '../Panels/DropdownMenu';
+import RequestResult from '../../../types/RequestResult';
 
 const api = axios.create({
   baseURL: 'http://localhost:5109/api/v1'
 });
 
-const AdminGenres = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [selectedGenre, setSelectedGenre] = useState<TGenre | null>(null);
+const UserManagement = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [genres, setGenres] = useState<TGenre[]>([]);
+  const [users, setUsers] = useState<TUser[]>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [requestResult, setRequestResult] = useState<RequestResult>(RequestResult.Default);
 
-  const pageSize = 8;
+  const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
+  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<TUser | null>(null);
+
+  const pageSize = 7;
   const navigate = useNavigate();
   const location = useLocation();
   const paths = location.pathname.slice(1).split('/');
 
   useEffect(() => {
-    const fetchGenres = async () => {
+    const fetchUsers = async () => {
       try {
-        const response = await api.get('/genres', {
+        const response = await api.get('/users', {
           params: {
             SearchTerm: search,
             PageNumber: page,
             PageSize: pageSize
           }
         });
-
-        setGenres(response.data);
+        setUsers(response.data);
         setLoading(false);
+
         const paginationHeader = response.headers['libraryapi-pagination'];
         if (paginationHeader) {
           const parsedHeader = JSON.parse(paginationHeader);
           setTotalPages(parsedHeader.TotalPages);
         }
       } catch (error) {
-        console.error('Error fetching genres:', error);
+        console.error('Kullanıcılar alınırken hata oluştu:', error);
       }
     };
 
-    fetchGenres();
+    fetchUsers();
   }, [search, page]);
 
-  const handleEdit = (genre: TGenre) => {
-    setSelectedGenre(genre);
+  const handleEdit = (user: TUser) => {
+    setSelectedUser(user);
     setIsEditOpen(true);
   };
 
-  const showDelete = (genre: TGenre) => {
-    setSelectedGenre(genre);
+  const showDelete = (user: TUser) => {
+    setSelectedUser(user);
     setIsDeleteOpen(true);
     setRequestResult(RequestResult.Default);
   };
 
   const handleDelete = async () => {
     try {
-      const response = await api.delete(`genres/${selectedGenre?.id}`);
-      if (response.status === 204) setIsDeleteOpen(false);
-      window.location.reload();
+      const response = await api.delete(`/users/${selectedUser?.id}`);
+      if (response.status === 204) {
+        setIsDeleteOpen(false);
+        window.location.reload();
+      }
     } catch (error) {
       setRequestResult(RequestResult.Failed);
-      console.error(error);
+      console.error('Kullanıcı silinirken hata oluştu:', error);
     }
   };
 
   return (
     <div className="mx-auto max-w-7xl p-6">
-      <AdminGenreCreationPanel isOpen={isOpen} setIsOpen={setIsOpen} />
-
-      <AdminGenreUpdatePanel
+      {/* Modals for creating, updating, and deleting a user */}
+      <AdminUserCreationPanel isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} />
+      <AdminUserUpdatePanel
         isOpen={isEditOpen}
         setIsOpen={setIsEditOpen}
-        genre={selectedGenre}
+        user={selectedUser}
       />
-
       <DeleteConfirmationModal
         isOpen={isDeleteOpen}
         onConfirm={handleDelete}
         onClose={() => setIsDeleteOpen(false)}
         setRequestResult={setRequestResult}
         requestResult={requestResult}
-        entityType='türü'
-        entityName={selectedGenre?.name}
-        warningMessage='Dikkat, bu türe ait bir alt tür veya kitap varsa silemezsiniz.'
+        entityType="kullanıcıyı"
+        entityName={`${selectedUser?.firstName} ${selectedUser?.lastName}`}
+        warningMessage="Dikkat, bu kullanıcıyı silmek geri alınamaz. Silmeden önce tüm bilgileri kontrol ettiğinizden emin olun."
       />
 
+      {/* Breadcrumbs and Create Button */}
       <div className="flex items-center justify-between">
         <nav className="flex items-center gap-2">
           <HomeIcon
@@ -128,23 +132,24 @@ const AdminGenres = () => {
         </nav>
         <div>
           <Button
-            onClick={() => setIsOpen(true)}
+            onClick={() => setIsCreateOpen(true)}
             className="flex items-center gap-1 rounded-md bg-sky-800 p-2"
           >
             <i className="material-symbols-outlined text-white">add</i>
-            <span className="font-semibold text-white">Kitap Türü Ekle</span>
+            <span className="font-semibold text-white">Kullanıcı Ekle</span>
           </Button>
         </div>
       </div>
 
       <div className="mb-2 mt-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-gray-800">Tüm Kitap Türleri</h2>
+        <h2 className="text-lg font-bold text-gray-800">Tüm Kullanıcılar</h2>
       </div>
 
+      {/* Search Input */}
       <div className="relative mb-4">
         <input
           type="text"
-          placeholder="Kitap Türü ara..."
+          placeholder="Kullanıcı ara..."
           value={search}
           onChange={(e) => {
             setPage(1);
@@ -157,6 +162,7 @@ const AdminGenres = () => {
         </i>
       </div>
 
+      {/* Table */}
       {loading ? (
         <TableSkeleton />
       ) : (
@@ -164,42 +170,46 @@ const AdminGenres = () => {
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-gray-100">
               <tr className="text-gray-700">
-                <th className="border p-3">İsim</th>
-                <th className="border p-3">Slug</th>
-                <th className="border p-3">Üst Tür</th>
+                <th className="border p-3">Ad</th>
+                <th className="border p-3">Soyad</th>
+                <th className="border p-3">Email</th>
+                <th className="border p-3">Kullanıcı Adı</th>
+                <th className="border p-3">Roller</th>
+                <th className="border p-3">ID</th>
                 <th className="border p-3 text-center">İşlemler</th>
               </tr>
             </thead>
             <tbody>
-              {genres && genres.length > 0 ? (
-                genres.map((genre: TGenre) => (
-                  <tr key={genre.id} className="hover:bg-gray-50">
-                    <td className="border p-3 font-medium">{genre.name}</td>
-                    <td className="border p-3">{genre.slug}</td>
+              {users && users.length > 0 ? (
+                users.map((user: TUser) => (
+                  <tr key={user.id} className="hover:bg-gray-50">
+                    <td className="border p-3 font-medium">{user.firstName}</td>
+                    <td className="border p-3">{user.lastName}</td>
+                    <td className="border p-3">{user.email}</td>
+                    <td className="border p-3">{user.username}</td>
                     <td className="border p-3">
-                      {genre.parentGenreName || 'Yok(Ana Tür)'}
+                      {user.roles && user.roles.length > 0 ? user.roles.join(', ') : 'Yok'}
                     </td>
+                    <td className="border p-3">{user.id}</td>
                     <td className="relative border p-3 text-center">
                       <DropdownMenu
-                        isOpen={openDropdownId === genre.id}
+                        isOpen={openDropdownId === user.id}
                         onToggle={() =>
-                          setOpenDropdownId(
-                            openDropdownId === genre.id ? null : genre.id
-                          )
+                          setOpenDropdownId(openDropdownId === user.id ? null : user.id)
                         }
-                        onEdit={() => handleEdit(genre)}
-                        onDelete={() => showDelete(genre)}
-                        onView={() => {
-                          navigate(`/genre/${genre.slug}`);
-                        }}
+                        onEdit={() => handleEdit(user)}
+                        onDelete={() => showDelete(user)}
+                        onView={() =>
+                          navigate(`/browse?q=${encodeURIComponent(user.username)}`)
+                        }
                       />
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="p-4 text-center text-gray-500">
-                    Tür bulunamadı.
+                  <td colSpan={7} className="p-4 text-center text-gray-500">
+                    Kullanıcı bulunamadı.
                   </td>
                 </tr>
               )}
@@ -208,6 +218,7 @@ const AdminGenres = () => {
         </div>
       )}
 
+      {/* Pagination */}
       <div className="mt-4 flex items-center justify-between">
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
@@ -241,4 +252,4 @@ const AdminGenres = () => {
   );
 };
 
-export default AdminGenres;
+export default UserManagement;

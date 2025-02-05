@@ -109,7 +109,7 @@ export default function AdminHeader({ onMenuClick }) {
 
             {user ? (
               <div className="hidden md:block">
-                <Avatar user={user} />
+                <Avatar />
               </div>
             ) : (
               <div

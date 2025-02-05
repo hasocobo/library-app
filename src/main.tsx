@@ -12,12 +12,13 @@ import BorrowedBookList from './pages/BorrowedBooks/BorrowedBookList.tsx';
 import BorrowedBookView from './components/Book/BorrowedBookView.tsx';
 import Unauthorized from './pages/Unauthorized.tsx';
 import PrivateRoute from './components/Authorization/PrivateRoute.tsx';
-import AdminDashboard from './components/Admin/AdminDashboard.tsx';
-import AdminBooks from './components/Admin/AdminBooks.tsx';
-import AdminBorrowedBooks from './components/Admin/AdminBorrowedBooks.tsx';
-import AdminUserManagement from './components/Admin/AdminUserManagement.tsx';
-import AdminGenres from './components/Admin/AdminGenres.tsx';
-import AdminAuthors from './components/Admin/AdminAuthors.tsx';
+import AdminDashboard from './components/Layouts/AdminDashboard.tsx';
+import BookManagement from './components/Admin/Pages/BookManagement.tsx';
+import BorrowedBookManagement from './components/Admin/Pages/BorrowedBookManagement.tsx';
+import UserManagement from './components/Admin/Pages/UserManagement.tsx';
+import GenreManagement from './components/Admin/Pages/GenreManagement.tsx';
+import AuthorManagement from './components/Admin/Pages/AuthorManagement.tsx';
+import LibrarianDashboard from './components/Layouts/LibrarianDashboard.tsx';
 
 const router = createBrowserRouter([
   {
@@ -84,23 +85,51 @@ const router = createBrowserRouter([
           },
           {
             path: 'books',
-            element: <AdminBooks />
+            element: <BookManagement />
           },
           {
             path: 'borrowedbooks',
-            element: <AdminBorrowedBooks />
+            element: <BorrowedBookManagement />
           },
           {
             path: 'users',
-            element: <AdminUserManagement />
+            element: <UserManagement />
           },
           {
             path: 'genres',
-            element: <AdminGenres />
+            element: <GenreManagement />
           },
           {
             path: 'authors',
-            element: <AdminAuthors />
+            element: <AuthorManagement />
+          }
+        ]
+      }
+    ]
+  },
+  {
+    path: '/librarian',
+    element: <PrivateRoute allowedRoles={['Admin', 'Librarian'] } />,
+    children: [
+      {
+        path: '',
+        element: <LibrarianDashboard />,
+        children: [
+          {
+            path: 'books',
+            element: <BookManagement />
+          },
+          {
+            path: 'borrowedbooks',
+            element: <BorrowedBookManagement />
+          },
+          {
+            path: 'genres',
+            element: <GenreManagement />
+          },
+          {
+            path: 'authors',
+            element: <AuthorManagement />
           }
         ]
       }
