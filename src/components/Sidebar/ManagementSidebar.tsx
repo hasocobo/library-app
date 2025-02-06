@@ -9,7 +9,7 @@ const ManagementSidebar = ({ sidebarRoutes }: { sidebarRoutes: SidebarRoute[]}) 
 
   return (
     <aside className="hidden h-screen w-64 flex-col border-r border-slate-100 bg-white md:flex">
-      <div className="flex flex-col items-center border-b p-8 text-center">
+      <div className="flex flex-col items-center border-b border-slate-100 p-8 text-center">
         <UserIcon
           style={'h-24 w-24 bg-slate-50'}
           textStyle={'text-slate-700 text-lg'}

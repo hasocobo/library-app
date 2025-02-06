@@ -8,8 +8,10 @@ import TBorrowedBook from '../../types/BorrowedBook';
 import BorrowingStatus from '../../types/BorrowingStatus';
 import { useUser } from '../../context/UserProvider';
 import api from '../../api';
+import ConfirmationDialog from '../ConfirmationModal';
 
 const BookView = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [book, setBook] = useState<TBook | null>(null);
   const [borrowedBook, setBorrowedBook] = useState<TBorrowedBook | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,8 +70,8 @@ const BookView = () => {
     fetchData();
   }, [bookId, user?.id]);
 
-  const handleBorrowBook = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleBorrowBook = async () => {
+    setIsOpen(false);
     if (!localStorage.getItem('jwtToken')) {
       navigate('/login');
       return;
@@ -244,7 +246,7 @@ const BookView = () => {
                   className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                 />
                 <Button
-                  onClick={handleBorrowBook}
+                  onClick={() => setIsOpen(true)}
                   className="mt-4 w-full rounded-sm bg-green-800 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-900 disabled:bg-slate-300"
                   disabled={!dueDate}
                 >
@@ -296,6 +298,13 @@ const BookView = () => {
 
   return (
     <div className="mx-auto max-w-5xl p-4">
+      <ConfirmationDialog
+        isOpen={isOpen}
+        onConfirm={handleBorrowBook}
+        title='Kitabı ödünç almak istediğinize emin misiniz?'
+        onClose={() => setIsOpen(false)}
+        message={`${new Date(dueDate).toLocaleDateString()} tarihine kadar iade etmeniz gerekmektedir`}
+      />
       <div className="flex flex-col gap-8 md:flex-row">
         <div className="md:w-1/3">
           <img

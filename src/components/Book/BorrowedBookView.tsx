@@ -7,25 +7,31 @@ import { useUser } from '../../context/UserProvider';
 import bookImage from '../../assets/cover.png';
 import BorrowingStatus from '../../types/BorrowingStatus';
 import api from '../../api';
+import ConfirmationDialog from '../ConfirmationModal';
 
 const BorrowedBookView = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [book, setBook] = useState<TBorrowedBook | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { borrowedBookId } = useParams();
   const { user } = useUser();
-  const [borrowingStatus, setBorrowingStatus] = useState<BorrowingStatus>(BorrowingStatus.AlreadyBorrowed);
+  const [borrowingStatus, setBorrowingStatus] = useState<BorrowingStatus>(
+    BorrowingStatus.AlreadyBorrowed
+  );
   const navigate = useNavigate();
-  
 
   const handleReturnBook = async () => {
+    setIsOpen(false);
     try {
-      const response = await api.delete(`users/${user.id}/borrowed-books/${borrowedBookId}`);
+      const response = await api.delete(
+        `users/${user.id}/borrowed-books/${borrowedBookId}`
+      );
       if (response.status === 200) {
         setBorrowingStatus(BorrowingStatus.Returned);
       }
     } catch (error) {
-      console.log("An error occurred when returning the book", error);
+      console.log('An error occurred when returning the book', error);
       setBorrowingStatus(BorrowingStatus.Failed);
     }
   };
@@ -102,7 +108,7 @@ const BorrowedBookView = () => {
                   İade işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin.
                 </p>
                 <Button
-                  onClick={handleReturnBook}
+                  onClick={() => setIsOpen(true)}
                   className="mt-4 rounded-sm bg-red-800 px-3 py-2 text-sm font-medium font-semibold text-white hover:bg-red-900"
                 >
                   Tekrar Dene
@@ -114,7 +120,7 @@ const BorrowedBookView = () => {
       default:
         return (
           <Button
-            onClick={handleReturnBook}
+            onClick={() => setIsOpen(true)}
             className="w-full rounded-sm bg-green-700 px-4 py-2 text-sm font-medium font-semibold text-white transition-colors hover:bg-green-800"
           >
             Kitabı İade Et
@@ -162,6 +168,13 @@ const BorrowedBookView = () => {
 
   return (
     <div className="mx-auto max-w-5xl p-4">
+      <ConfirmationDialog
+        isOpen={isOpen}
+        onConfirm={handleReturnBook}
+        title="Kitabı iade etmek istediğinize emin misiniz?"
+        onClose={() => setIsOpen(false)}
+        message={`${book.title} adlı kitabı iade etmek istiyor musunuz?`}
+      />
       <div className="flex flex-col gap-8 md:flex-row">
         {/* Kitap Resmi ve Temel Bilgiler */}
         <div className="md:w-1/3">
@@ -262,8 +275,5 @@ const BorrowedBookView = () => {
     </div>
   );
 };
-
-
-
 
 export default BorrowedBookView;
