@@ -183,7 +183,7 @@ const GenreManagement = () => {
                         onEdit={() => handleEdit(genre)}
                         onDelete={() => showDelete(genre)}
                         onView={() => {
-                          navigate(`/genre/${genre.slug}`);
+                          navigate(`/browse?genre=${genre.id}`);
                         }}
                       />
                     </td>

@@ -17,6 +17,15 @@ const FilterSection = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const queryParam = searchParams.get('q');
+
+  useEffect(() => {
+    if (queryParam !== null) {
+      setSelectedAuthor(null);
+      setSelectedGenre(null);
+      setSortDirection(null);
+    }
+  }, [queryParam]);
   
 
   useEffect(() => {
@@ -69,8 +78,9 @@ const FilterSection = () => {
     const newSearchParams = new URLSearchParams();
 
     if (selectedAuthor) newSearchParams.set('author', selectedAuthor.id);
-    if (selectedGenre) newSearchParams.set('genre', selectedGenre.id);
-    if (sortDirection) newSearchParams.set('sort', sortDirection);
+    if (selectedGenre ) newSearchParams.set('genre', selectedGenre.id);
+    if (sortDirection ) newSearchParams.set('sort', sortDirection);
+    if ( queryParam && !selectedAuthor && !selectedGenre && !sortDirection) newSearchParams.set('q', queryParam)
 
     navigate({
       pathname: '/browse',
@@ -179,7 +189,7 @@ const FilterSection = () => {
                     />
                     <label
                       htmlFor={author.id}
-                      className="text-sm text-slate-700 hover:cursor-pointer"
+                      className={`text-sm text-slate-700 hover:cursor-pointer ${selectedAuthor?.id === author.id && 'font-semibold'}`}
                     >
                       {author.firstName + ' ' + author.lastName}
                     </label>

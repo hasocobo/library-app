@@ -38,7 +38,9 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
   useEffect(() => {
     const fetchAuthors = async () => {
       try {
-        const response = await api.get('/authors');
+        const response = await api.get('/authors', {params: {
+          PageSize: 50
+        }});
         setAuthors(response.data);
         if (response.data.length > 0) {
           setSelectedAuthorId(response.data[0].id);
@@ -50,7 +52,9 @@ const AdminBookCreationPanel = ({ isOpen, setIsOpen }) => {
 
     const fetchGenres = async () => {
       try {
-        const response = await api.get('/genres');
+        const response = await api.get('/genres', {params: {
+          PageSize: 50
+        }});
         setGenres(response.data);
         if (response.data.length > 0) {
           setSelectedGenreId(response.data[0].id);

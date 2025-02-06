@@ -88,21 +88,6 @@ const BookList = () => {
       {/* Floating Filter for Desktop */}
       <aside className="hidden lg:block">{<FilterSection />}</aside>
 
-      {/* Mobile Filter Overlay */}
-      {showFilter && (
-        <div
-          className="fixed inset-0 z-30 bg-black/50"
-          onClick={() => setShowFilter(false)}
-        >
-          <div
-            className="absolute bottom-0 w-full rounded-t-xl bg-white p-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <FilterSection />
-          </div>
-        </div>
-      )}
-
       <div className="flex grow flex-col px-4 py-6 text-slate-600">
         <p className="mb-4 text-sm font-semibold tracking-wide text-slate-400">
           <Link to="/" className="text-slate-400 hover:text-slate-500">
