@@ -29,6 +29,11 @@ main * {
   color: rgb(56, 56, 56);
 }
 
+main {
+  scrollbar-gutter: stable!important;
+
+}
+
 :root {
   --red: rgb(220, 38, 38);
 }
@@ -122,3 +127,4 @@ main:not(.icon) {
     transform: translateX(-101%);
   }
 }
+

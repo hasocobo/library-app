@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
 import { Button } from '@headlessui/react';
 import { useUser } from '../../context/UserProvider';
 import TBorrowedBook from '../../types/BorrowedBook';
@@ -8,11 +7,8 @@ import BookSkeleton from '../../components/BookSkeleton';
 import BorrowedBook from '../../components/Book/BorrowedBook';
 import PaginationHeader from '../../types/PaginationHeader';
 import Pagination from '../../components/Pagination';
+import api from '../../api';
 
-const api = axios.create({
-  baseURL: `http://localhost:5109/api/v1/`,
-  headers: { 'Content-Type': 'application/json' }
-});
 
 const BorrowedBookList = () => {
   // State declarations with pagination additions

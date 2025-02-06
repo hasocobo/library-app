@@ -72,11 +72,17 @@ export default function Header({ onMenuClick }) {
 
   const handleSearch = () => {
     const newSearchParams = new URLSearchParams();
+    /*
+    const selectedAuthorId = searchParams.get('author');
+    const selectedGenreId = searchParams.get('genre')
+
+    if (selectedAuthorId) newSearchParams.set('author', selectedAuthorId);
+
+    if (selectedGenreId) newSearchParams.set('genre', selectedGenreId);
+*/
     if (searchTerm) {
       newSearchParams.set('q', searchTerm);
-    } /*else {
-      newSearchParams.delete('q');
-    }*/
+    } 
 
     navigate({
       pathname: '/browse',
@@ -85,7 +91,7 @@ export default function Header({ onMenuClick }) {
   };
 
   return (
-    <div className="relative sticky w-full border-b border-slate-100 bg-white text-sm font-semibold">
+    <div className="relative z-50 sticky w-full border-b border-slate-100 bg-white text-sm font-semibold">
       <div className="mx-auto max-w-7xl">
         <div className="px-4">
           <div className="flex h-16 items-center justify-between lg:h-20">

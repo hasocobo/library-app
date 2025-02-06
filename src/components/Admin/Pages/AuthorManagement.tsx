@@ -187,7 +187,7 @@ const AuthorManagement = () => {
                         onDelete={() => showDelete(author)}
                         onView={() => {
                           navigate(
-                            `/browse?q=${author.firstName + ' ' + author.lastName}`
+                            `/browse?author=${author.id}`
                           );
                         }}
                       />

@@ -48,7 +48,7 @@ const BookView = () => {
         ]);
 
         setBook(bookResponse.data);
-        if (borrowedBookResponse.data) {
+        if (borrowedBookResponse && borrowedBookResponse.data) {
           setBorrowedBook(borrowedBookResponse.data);
           setBorrowingSuccess(2);
         }

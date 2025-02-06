@@ -39,7 +39,7 @@ const Pagination = ({
 
   return (
     <nav
-      className="mt-8 flex py-2 items-center justify-center"
+      className="mt-8 flex pb-2 items-center justify-center"
       aria-label="Pagination"
     >
       {/* Previous Button */}
