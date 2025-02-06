@@ -101,7 +101,7 @@ const FilterSection = () => {
   };
 
   return (
-    <aside className="sticky top-4 w-60 shrink-0 space-y-4 bg-white p-4">
+    <aside className="sticky top-0 w-60 shrink-0 space-y-4 bg-white p-4">
       <div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
