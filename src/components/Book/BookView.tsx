@@ -233,7 +233,7 @@ const BookView = () => {
                   htmlFor="dueDate"
                   className="block text-sm font-medium text-slate-700"
                 >
-                  İade Tarihi
+                  Son Teslim Tarihi
                 </label>
                 <input
                   type="date"

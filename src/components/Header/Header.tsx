@@ -82,7 +82,7 @@ export default function Header({ onMenuClick }) {
 */
     if (searchTerm) {
       newSearchParams.set('q', searchTerm);
-    } 
+    }
 
     navigate({
       pathname: '/browse',
@@ -91,7 +91,7 @@ export default function Header({ onMenuClick }) {
   };
 
   return (
-    <div className="relative z-50 sticky w-full border-b border-slate-100 bg-white text-sm font-semibold">
+    <div className="relative sticky z-50 w-full border-b border-slate-100 bg-white text-sm font-semibold">
       <div className="mx-auto max-w-7xl">
         <div className="px-4">
           <div className="flex h-16 items-center justify-between lg:h-20">
@@ -102,7 +102,7 @@ export default function Header({ onMenuClick }) {
               menu
             </i>
             <div className="hidden h-full w-full items-center justify-start md:flex">
-              <div className="flex h-full items-center gap-4">
+              <div className="flex h-full items-center lg:gap-4 gap-2">
                 <NavItem
                   icon={'home'}
                   name={'Ana Sayfa'}
@@ -228,7 +228,7 @@ export default function Header({ onMenuClick }) {
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
                     placeholder="Tüm Kitaplarda Ara..."
-                    className="h-10 w-96 rounded-lg border border-slate-200 pl-10 pr-12 text-sm text-slate-600 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="h-10 lg:w-96 md:w-60 rounded-lg border border-slate-200 pl-10 pr-12 text-sm text-slate-600 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   />
                   <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
                     {isFocused ? (
@@ -249,8 +249,35 @@ export default function Header({ onMenuClick }) {
             </div>
 
             {user ? (
-              <div className="hidden md:block">
+              <div className="hidden md:flex">
                 <Avatar />
+                {user.roles.includes('Admin') ? (
+                  <div
+                    onClick={() => navigate('/admin/books')}
+                    className="bg-rounded-xl right-10 ml-2 hidden cursor-pointer items-center justify-center gap-1 rounded-sm p-2 hover:bg-slate-100 md:flex"
+                  >
+                    <i className="material-symbols-outlined text-lg text-slate-500">
+                      arrow_forward
+                    </i>
+                    <div className="text-nowrap text-sm font-semibold tracking-tight text-slate-700">
+                      Admin Paneli
+                    </div>
+                  </div>
+                ) : user.roles.includes('Librarian') ? (
+                  <div
+                    onClick={() => navigate('/librarian/books')}
+                    className="bg-rounded-xl right-10 ml-2 hidden cursor-pointer items-center justify-center gap-1 rounded-sm p-2 hover:bg-slate-100 md:flex"
+                  >
+                    <i className="material-symbols-outlined text-lg text-slate-500">
+                      arrow_forward
+                    </i>
+                    <div className="text-nowrap text-sm font-semibold tracking-tight text-slate-700">
+                      Yönetim Paneli
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
             ) : (
               <div
@@ -259,34 +286,6 @@ export default function Header({ onMenuClick }) {
               >
                 <p className="text-nowrap text-white">Giriş Yap</p>
               </div>
-            )}
-
-            {user && user.roles.includes('Admin') ? (
-              <div
-                onClick={() => navigate('/admin/books')}
-                className="bg-rounded-xl absolute right-10 ml-2 hidden cursor-pointer items-center justify-center gap-1 rounded-sm p-2 hover:bg-slate-100 md:flex"
-              >
-                <i className="material-symbols-outlined text-lg text-slate-500">
-                  arrow_forward
-                </i>
-                <div className="text-nowrap text-sm font-semibold tracking-tight text-slate-700">
-                  Admin Paneli
-                </div>
-              </div>
-            ) : user && user.roles.includes('Librarian') ? (
-              <div
-                onClick={() => navigate('/librarian/books')}
-                className="bg-rounded-xl absolute right-10 ml-2 hidden cursor-pointer items-center justify-center gap-1 rounded-sm p-2 hover:bg-slate-100 md:flex"
-              >
-                <i className="material-symbols-outlined text-lg text-slate-500">
-                  arrow_forward
-                </i>
-                <div className="text-nowrap text-sm font-semibold tracking-tight text-slate-700">
-                  Yönetim Paneli
-                </div>
-              </div>
-            ) : (
-              <></>
             )}
           </div>
         </div>

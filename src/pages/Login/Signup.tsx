@@ -73,7 +73,7 @@ export default function Signup() {
                 leaveFrom="opacity-100 transform-[scale(100%)]"
                 leaveTo="opacity-0 transform-[scale(95%)]"
               >
-                <DialogPanel className="w-96 max-w-md rounded-xl border bg-white/5 p-6 backdrop-blur-2xl">
+                <DialogPanel className="w-96 max-w-md rounded-md border bg-white/5 p-6 backdrop-blur-2xl">
                   <DialogTitle
                     as="h3"
                     className="flex items-center gap-2 text-lg font-semibold text-slate-800"
@@ -85,13 +85,13 @@ export default function Signup() {
                     </div>
                     Kullanıcı oluşturma başarılı!
                   </DialogTitle>
-                  <p className="mt-2 text-sm/6 text-slate-800/50">
+                  <p className="mt-2 pl-6 text-sm/6 text-slate-800/65">
                     Şimdi kullanıcı adını ve şifreni kullanarak giriş yapabilirsin.
                   </p>
                   <div className="mt-4">
-                    <div className="flex justify-between">
+                    <div className="flex justify-end gap-2">
                       <Button
-                        className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold text-green-900 shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-green-50 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
+                        className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold text-slate-900 shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-slate-50 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
                         onClick={() => setIsSuccessOpen(false)}
                       >
                         Kapat
@@ -126,7 +126,7 @@ export default function Signup() {
                 leaveFrom="opacity-100 transform-[scale(100%)]"
                 leaveTo="opacity-0 transform-[scale(95%)]"
               >
-                <DialogPanel className="w-96 max-w-md rounded-xl border bg-white/5 p-6 backdrop-blur-2xl">
+                <DialogPanel className="w-96 max-w-md rounded-md border bg-white/5 p-6 backdrop-blur-2xl">
                   <DialogTitle
                     as="h3"
                     className="flex items-center gap-2 text-lg font-semibold text-slate-800"
@@ -143,18 +143,18 @@ export default function Signup() {
                     e-posta adresi deneyin.
                   </p>
                   <div className="mt-4">
-                    <div className="flex justify-between">
+                    <div className="flex justify-end gap-2">
                       <Button
-                        className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold text-blue-900 shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-blue-50 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
+                        className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm/6 font-semibold text-slate-700 shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-blue-50 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
                         onClick={() => setIsFailureOpen(false)}
                       >
-                        Close
+                        Kapat
                       </Button>
                       <Button
                         className="inline-flex items-center gap-2 rounded-md bg-blue-400 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-blue-500 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
                         onClick={() => navigate('/login')}
                       >
-                        Mevcut kullanıcı adıyla giriş yap
+                        Mevcut kullanıcıyla giriş yap
                       </Button>
                     </div>
                   </div>

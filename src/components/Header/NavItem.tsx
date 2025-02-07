@@ -26,7 +26,7 @@ const NavItem = ({
     <Link
       to={link}
       onClick={onClick}
-      className={`items-center relative px-4 h-full flex transition duration-300
+      className={`items-center lg:text-sm relative px-4 h-full flex transition duration-300
          hover:cursor-pointer hover:border-b-2 border-sky-600 border-opacity-50
          active:border-b-2 ${style}`}
     >

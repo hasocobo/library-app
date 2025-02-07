@@ -42,7 +42,7 @@ const ConfirmationDialog = ({
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 shadow-lg transition-all">
+            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-5 shadow-lg transition-all">
               <button
                 onClick={onClose}
                 className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
@@ -52,7 +52,7 @@ const ConfirmationDialog = ({
               <Dialog.Title className="text-lg font-semibold text-gray-800">
                 {title}
               </Dialog.Title>
-              <p className="mt-2 text-sm bg-slate-50 text-slate-500 mt-3 px-3 py-2 rounded-lg">{message}</p>
+              <p className="mt-2 text-sm bg-white text-slate-500 mt-3 px-3 py-2 rounded-lg">{message}</p>
 
               <div className="mt-5 flex justify-end gap-3">
                 <button
