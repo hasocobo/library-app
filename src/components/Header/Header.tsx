@@ -14,13 +14,8 @@ import {
   Transition
 } from '@headlessui/react';
 import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
 import TGenre from '../../types/Genre';
-
-const api = axios.create({
-  baseURL: `http://localhost:5109/api/v1/`,
-  headers: { 'Content-Type': 'application/json' }
-});
+import api from '../../api';
 
 export default function Header({ onMenuClick }) {
   const { user } = useUser();
